@@ -16,6 +16,8 @@ set gcr=a:blinkon0              "Disable cursor blink
 set visualbell                  "No sounds
 set autoread                    "Reload files changed outside vim
 
+let mapleader=','
+
 " This makes vim act like all other editors, buffers can
 " exist in the background without being in a window.
 " http://items.sjbach.com/319/configuring-vim-right
@@ -71,7 +73,7 @@ set nofoldenable        "dont fold by default
 
 " ================ Completion =======================
 
-set wildmode=longest:full
+set wildmode=full
 set wildmenu                "enable ctrl-n and ctrl-p to scroll thru matches
 set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
 set wildignore+=*vim/backups*
@@ -120,3 +122,10 @@ set title
 
 " Use the OS clipboard by default (on versions compiled with `+clipboard`)
 set clipboard=unnamed
+
+if $COLORTERM == 'gnome-terminal'
+  set t_Co=256
+endif
+
+colorscheme solarized
+set background=dark
