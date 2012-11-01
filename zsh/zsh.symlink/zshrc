@@ -1,0 +1,6 @@
+# load aliases
+
+for config_file (~/.zsh/*.zsh)
+do
+  [[ -f $config_file ]] && source "$config_file"
+done
