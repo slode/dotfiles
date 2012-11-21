@@ -41,7 +41,7 @@ export PATH="${PATH}:${HOME}/bin"
 # Dircolors
 #-----------------------------
 #eval `dircolors ~/.dircolors`
-[[ -s $HOME/.dircolors ]] && eval "dircolors $HOME/.dircolors"
+[[ -s $HOME/.dircolors ]] && eval `dircolors $HOME/.dircolors`
 
 #-----------------------------
 # Share history | add before exec
