@@ -7,6 +7,7 @@ call pathogen#infect()
 
 " ================ General Config ====================
 
+set nocompatible                "Cancel compatibility with VI
 set number                      "Line numbers are good
 set backspace=indent,eol,start  "Allow backspace in insert mode
 set history=1000                "Store lots of :cmdline history
@@ -15,8 +16,14 @@ set showmode                    "Show current mode down the bottom
 set gcr=a:blinkon0              "Disable cursor blink
 set visualbell                  "No sounds
 set autoread                    "Reload files changed outside vim
+set fileformats=unix,dos
+set encoding=utf-8
+set nuw=6                       "Number column width
 
 let mapleader=','
+
+" ================ Navigation Settings  =================
+set whichwrap=<,>,[,]
 
 " This makes vim act like all other editors, buffers can
 " exist in the background without being in a window.
@@ -32,21 +39,35 @@ set incsearch        "Find the next match as we type the search
 set hlsearch         "Hilight searches by default
 set viminfo='100,f1  "Save up to 100 marks, enable capital marks
 set ignorecase 	     "Ignore case of searches
+set smartcase
+
+au VimEnter * nohls   "End searches on quit
+
 " ================ Turn Off Swap Files ==============
 
 set noswapfile
 set nobackup
-set nowb
+"set nowb           "Make a backup before overwriting a file
 
 " ================ Persistent Undo ==================
 " Keep undo history across sessions, by storing in file.
 " Only works all the time.
+silen !mkdir ~/.vim/runtime > /dev/null 2>&1
 
-silent !mkdir ~/.vim/backups > /dev/null 2>&1
-set undodir=~/.vim/backups
+silent !mkdir ~/.vim/runtime/undodir > /dev/null 2>&1
+set undodir=~/.vim/runtime/undodir//
 set undofile
 
+silent !mkdir ~/.vim/runtime/backup > /dev/null 2>&1
+"set backupdir=~/.vim/runtime/backup//
+
+silent !mkdir ~/.vim/runtime/swapdir > /dev/null 2>&1
+"set directory=~/.vim/runtime/swapdir//
+
 " ================ Indentation ======================
+
+filetype plugin on
+filetype indent on
 
 set autoindent
 set smartindent
@@ -56,11 +77,12 @@ set softtabstop=2
 set tabstop=2
 set expandtab
 
-filetype plugin on
-filetype indent on
+" ================ Whitespace Formatting ============================
 
 " Display tabs and trailing spaces visually
-set list listchars=tab:\ \ ,trail:·
+"set listchars=nbsp:¬,eol:¶,tab:▸\,extends:»,precedes:«,trail:·
+set listchars=nbsp:¬,eol:¶,tab:>-,extends:»,precedes:«,trail:·
+set nolist
 
 set nowrap       "Don't wrap lines
 set linebreak    "Wrap lines at convenient points
@@ -86,21 +108,16 @@ set wildignore+=log/**
 set wildignore+=tmp/**
 set wildignore+=*.png,*.jpg,*.gif
 
-"
-
 " ================ Scrolling ========================
 
-set scrolloff=8         "Start scrolling when we're 8 lines away from margins
-set sidescrolloff=15
-set sidescroll=1
+set scrolloff=3         "Start scrolling when we're 8 lines away from margins
+set sidescrolloff=2
+set sidescroll=0
 
 " Respect modeline in files
 set modeline
 set modelines=4
 
-" Show “invisible” characters
-set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
-set nolist
 
 " Don’t reset cursor to start of line when moving around.
 set nostartofline
@@ -123,9 +140,90 @@ set title
 " Use the OS clipboard by default (on versions compiled with `+clipboard`)
 set clipboard=unnamed
 
+" ================ Terminal Hacks ========================
+
 if $COLORTERM == 'gnome-terminal'
   set t_Co=256
 endif
 
+" ================ Colorschemes ========================
+
 colorscheme solarized
-set background=dark
+set background=light
+
+" ================ OmniComplete ========================
+
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType c set omnifunc=ccomplete#Complete
+
+" ================ Gvim Specifics  ========================
+" T => no toolbar
+" m => no menu
+" RrLlb => no scrollbars
+" e => no gui tabs
+" + to fix bug
+
+if has('gui_running')
+  set guioptions=TmRrbLle
+  set guioptions-=TmRrbLle
+
+  " a => global visual copy/cut
+  set guioptions+=ac
+endif
+
+" ================ php  ========================
+
+" run file with PHP CLI (CTRL-K)
+:autocmd FileType php noremap <leader>m :w!<CR>:!/usr/bin/php %:p<CR>
+
+" PHP parser check (CTRL-L)
+:autocmd FileType php noremap <leader>l :!/usr/bin/php -l %:p<CR>
+
+" ================ html  ========================
+
+" ================ C++  ========================
+
+" ================ Javascript ========================
+
+" indent
+au FileType javascript setl nocindent
+
+" ================ Python ========================
+ 
+" indent
+autocmd FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
+
+" running
+autocmd FileType python noremap <leader>m :!/usr/bin/env python % <CR>
+
+" ================ Remaps  ========================
+
+map <C-\>       :exec("tag ".expand("<cword>"))<CR>
+map <C-]>       :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+
+" tab navigation
+map <leader>z   :tabprevious<cr>
+map <leader>x   :tabnext<cr>
+
+" toggles listing of white-space
+nmap <F9>       :set list!<cr>
+
+" removes trailing white-space
+nmap <S-F9>     :%s/\s\+$//<cr>
+
+" space toggles folding
+nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
+
+
+" ================ Default tag files  ========================
+
+set tags+=~/.tags
+set tags+=./tags;/
+
+" ================ Sourcing .vimrc  ========================
+au! BufWritePost .vimrc source %
