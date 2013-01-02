@@ -1,8 +1,9 @@
 #####################################
 # Install basic vim settings
 #####################################
-ln -s `pwd`/vimrc.symlink ~/.vimrc
-ln -s `pwd`/vim.symlink ~/.vim
+cp -vi  `pwd`/vimrc ~/.vimrc
+cp -rvi `pwd`/vim ~/.vim
+cp -rvi `pwd`/fonts ~/.fonts
 
 #####################################
 # Install all modules to .vim/bundle
@@ -24,6 +25,7 @@ https://github.com/honza/snipmate-snippets.git
 https://github.com/skwp/vim-powerline.git
 https://github.com/Rip-Rip/clang_complete.git
 https://github.com/scrooloose/nerdtree.git
+https://github.com/xuhdev/SingleCompile.git
 https://github.com/jistr/vim-nerdtree-tabs.git
 https://github.com/skwp/vim-colors-solarized.git
 http://github.com/sjl/gundo.vim.git"
