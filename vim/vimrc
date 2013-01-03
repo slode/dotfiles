@@ -47,7 +47,7 @@ au VimEnter * nohls   "End searches on quit
 
 set noswapfile
 set nobackup
-"set nowb           "Make a backup before overwriting a file
+set nowb
 
 " ================ Persistent Undo ==================
 " Keep undo history across sessions, by storing in file.
@@ -58,11 +58,11 @@ silent !mkdir ~/.vim/runtime/undodir > /dev/null 2>&1
 set undodir=~/.vim/runtime/undodir//
 set undofile
 
-silent !mkdir ~/.vim/runtime/backup > /dev/null 2>&1
-"set backupdir=~/.vim/runtime/backup//
+silent !mkdir ~/.vim/runtime/undodir > /dev/null 2>&1
+set backupdir=~/.vim/runtime/undodir//
 
 silent !mkdir ~/.vim/runtime/swapdir > /dev/null 2>&1
-"set directory=~/.vim/runtime/swapdir//
+set backupdir=~/.vim/runtime/swapdir//
 
 " ================ Indentation ======================
 
@@ -110,9 +110,9 @@ set wildignore+=*.png,*.jpg,*.gif
 
 " ================ Scrolling ========================
 
-set scrolloff=3         "Start scrolling when we're 8 lines away from margins
-set sidescrolloff=2
-set sidescroll=0
+set scrolloff=8         "Start scrolling when we're 8 lines away from margins
+set sidescrolloff=15
+set sidescroll=1
 
 " Respect modeline in files
 set modeline
@@ -218,12 +218,6 @@ nmap <S-F9>     :%s/\s\+$//<cr>
 
 " space toggles folding
 nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
-
-
-" ================ Default tag files  ========================
-
-set tags+=~/.tags
-set tags+=./tags;/
 
 " ================ Sourcing .vimrc  ========================
 au! BufWritePost .vimrc source %
