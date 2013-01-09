@@ -188,10 +188,16 @@ endif
 
 " ================ C++  ========================
 
+" ================ C++  ========================
+autocmd FileType cpp,cc,c,h,hh,hpp setlocal cindent cino=N-s,g-s,t0,+2s,
+" ================ Make  ========================
+
+autocmd FileType make setlocal noexpandtab
+
 " ================ Javascript ========================
 
 " indent
-au FileType javascript setl nocindent
+au FileType javascript setlocal nocindent
 
 " ================ Python ========================
  
