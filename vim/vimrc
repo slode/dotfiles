@@ -47,22 +47,22 @@ au VimEnter * nohls   "End searches on quit
 
 set noswapfile
 set nobackup
-set nowb
+"set nowb           "Make a backup before overwriting a file
 
 " ================ Persistent Undo ==================
 " Keep undo history across sessions, by storing in file.
 " Only works all the time.
 silen !mkdir ~/.vim/runtime > /dev/null 2>&1
 
-silent !mkdir ~/.vim/runtime/undodir > /dev/null 2>&1
-set undodir=~/.vim/runtime/undodir//
-set undofile
+"silent !mkdir ~/.vim/runtime/undodir > /dev/null 2>&1
+"set undodir=~/.vim/runtime/undodir//
+"set undofile
 
-silent !mkdir ~/.vim/runtime/undodir > /dev/null 2>&1
-set backupdir=~/.vim/runtime/undodir//
+silent !mkdir ~/.vim/runtime/backup > /dev/null 2>&1
+"set backupdir=~/.vim/runtime/backup//
 
 silent !mkdir ~/.vim/runtime/swapdir > /dev/null 2>&1
-set backupdir=~/.vim/runtime/swapdir//
+"set directory=~/.vim/runtime/swapdir//
 
 " ================ Indentation ======================
 
@@ -110,9 +110,9 @@ set wildignore+=*.png,*.jpg,*.gif
 
 " ================ Scrolling ========================
 
-set scrolloff=8         "Start scrolling when we're 8 lines away from margins
-set sidescrolloff=15
-set sidescroll=1
+set scrolloff=3         "Start scrolling when we're 8 lines away from margins
+set sidescrolloff=2
+set sidescroll=0
 
 " Respect modeline in files
 set modeline
@@ -174,8 +174,10 @@ if has('gui_running')
 
   " a => global visual copy/cut
   set guioptions+=ac
+  set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 11
+  set background=dark
 endif
-
+"
 " ================ php  ========================
 
 " run file with PHP CLI (CTRL-K)
@@ -219,5 +221,17 @@ nmap <S-F9>     :%s/\s\+$//<cr>
 " space toggles folding
 nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
 
+
+" ================ Default tag files  ========================
+
+set tags+=~/.tags
+set tags+=./tags;/
+
 " ================ Sourcing .vimrc  ========================
 au! BufWritePost .vimrc source %
+
+
+" ================ Sourcing .vimrc.local  ========================
+if filereadable("~/.vimrc.local")
+  so ~/.vimrc.local
+endif
