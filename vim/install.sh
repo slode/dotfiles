@@ -1,9 +1,9 @@
 #####################################
 # Install basic vim settings
 #####################################
-cp -vi  `pwd`/vimrc ~/.vimrc
-cp -rvi `pwd`/vim ~/.vim
-cp -rvi `pwd`/fonts ~/.fonts
+cp -v  `pwd`/vimrc ~/.vimrc
+cp -rv `pwd`/vim ~/.vim
+cp -rv `pwd`/fonts ~/.fonts
 
 #####################################
 # Install all modules to .vim/bundle
@@ -12,6 +12,7 @@ cp -rvi `pwd`/fonts ~/.fonts
 GIT=`which git`
 
 PACKAGES="https://github.com/tpope/vim-pathogen.git
+https://github.com/nvie/vim-flake8.git
 https://github.com/skwp/YankRing.vim.git
 https://github.com/tpope/vim-git.git
 https://github.com/gregsexton/gitv.git
@@ -26,6 +27,7 @@ https://github.com/skwp/vim-powerline.git
 https://github.com/Rip-Rip/clang_complete.git
 https://github.com/scrooloose/nerdtree.git
 https://github.com/xuhdev/SingleCompile.git
+https://github.com/vim-scripts/taglist.vim.git
 https://github.com/jistr/vim-nerdtree-tabs.git
 https://github.com/skwp/vim-colors-solarized.git
 http://github.com/sjl/gundo.vim.git"
