@@ -12,6 +12,7 @@ cp -rv `pwd`/fonts ~/.fonts
 GIT=`which git`
 
 PACKAGES="https://github.com/tpope/vim-pathogen.git
+https://github.com/vim-scripts/FuzzyFinder.git
 https://github.com/nvie/vim-flake8.git
 https://github.com/skwp/YankRing.vim.git
 https://github.com/tpope/vim-git.git
