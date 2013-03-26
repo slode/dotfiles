@@ -13,6 +13,7 @@ GIT=`which git`
 
 PACKAGES="https://github.com/tpope/vim-pathogen.git
 https://github.com/skwp/YankRing.vim.git
+https://github.com/vim-scripts/Ada-Bundle.git
 https://github.com/tpope/vim-git.git
 https://github.com/gregsexton/gitv.git
 https://github.com/tpope/vim-fugitive.git
