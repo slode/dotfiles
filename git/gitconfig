@@ -36,6 +36,8 @@
 	killbranches = !git branch | grep -v master | xargs git branch -d 2> /dev/null
 	sync = !git pull && git push
 	comerge = "!x() { target=`git symbolic-ref HEAD`; git co $1; git merge $target; }; x"
+  hide = update-index --assume-unchanged
+  unhide = update-index --no-assume-unchanged
 [push]
 	default=current
 [branch]
