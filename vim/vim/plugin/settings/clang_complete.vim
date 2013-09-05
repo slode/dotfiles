@@ -7,9 +7,9 @@ let g:clang_snippets = 1
 let g:clang_snippets_engine = 'clang_complete'
 " Complete options (disable preview scratch window)
 
-set completeopt = menu,menuone,longest
+"set completeopt = menu,menuone,longest
 " Limit popup menu height
-set pumheight = 15
+"set pumheight = 15
 
 " SuperTab option for context aware completion
 let g:SuperTabDefaultCompletionType = "context"
