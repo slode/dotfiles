@@ -8,6 +8,8 @@ alias ls="ls -Fh --color=auto --sort=extension"
 alias lsa="ls -Fah --color=auto --sort=extension" 
 alias lsd="ls -lah --color=auto -d */"
 
+alias dudir="du -xch --max-depth=0 *"
+
 alias xml="xmllint --format "
 
 alias grep="grep --color"
