@@ -35,7 +35,7 @@ https://github.com/xuhdev/SingleCompile.git
 https://github.com/vim-scripts/taglist.vim.git
 https://github.com/jistr/vim-nerdtree-tabs.git
 https://github.com/skwp/vim-colors-solarized.git
-http://github.com/sjl/gundo.vim.git"
+https://github.com/sjl/gundo.vim.git"
 
 if [ -d ~/.vim/bundle ]; then
 	cd ~/.vim/bundle
