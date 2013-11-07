@@ -1,9 +1,33 @@
+#!/bin/bash
+
 #####################################
 # Install basic vim settings
 #####################################
 
-cp -v  `pwd`/vimrc ~/.vimrc
+if [ -f ~/.vimrc ]; then
+	echo "This will install a vim setup."
+	echo "You already have a ~/.vimrc, and it will be"
+	echo "overwritten."
+	echo
+	read -p "Press ENTER to continue, CTRL+C to abort."
+fi
+
+# Create vim directory if it does not exist
+if [ ! -d ~/.vim ]; then
+	mkdir -p ~/.vim/bundle
+fi
+
+# Use interactive copying
+echo Setting up ~/.vimrc
+echo
+cp -v `pwd`/vimrc ~/.vimrc
+
+echo Setting up ~/.vim
+echo
 cp -rvuT `pwd`/vim ~/.vim
+
+echo Setting up ~/.fonts
+echo
 cp -rv `pwd`/fonts ~/.fonts
 
 #####################################
