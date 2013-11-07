@@ -51,7 +51,7 @@ https://github.com/ervandew/supertab.git
 https://github.com/tomtom/tlib_vim.git
 https://github.com/MarcWeber/vim-addon-mw-utils.git
 https://github.com/garbas/vim-snipmate.git
-https://github.com/honza/snipmate-snippets.git
+https://github.com/honza/vim-snippets
 https://github.com/skwp/vim-powerline.git
 https://github.com/Rip-Rip/clang_complete.git
 https://github.com/scrooloose/nerdtree.git
