@@ -18,14 +18,17 @@ if [ ! -d ~/.vim ]; then
 fi
 
 # Use interactive copying
+echo
 echo Setting up ~/.vimrc
 echo
 cp -v `pwd`/vimrc ~/.vimrc
 
+echo
 echo Setting up ~/.vim
 echo
 cp -rvuT `pwd`/vim ~/.vim
 
+echo
 echo Setting up ~/.fonts
 echo
 cp -rv `pwd`/fonts ~/.fonts
