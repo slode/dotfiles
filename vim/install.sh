@@ -64,6 +64,10 @@ https://github.com/jistr/vim-nerdtree-tabs.git
 https://github.com/skwp/vim-colors-solarized.git
 https://github.com/sjl/gundo.vim.git"
 
+echo
+echo Installing bundles
+echo
+
 if [ -d ~/.vim/bundle ]; then
 	cd ~/.vim/bundle
 	for PACKAGE in $PACKAGES
