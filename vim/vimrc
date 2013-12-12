@@ -209,6 +209,12 @@ autocmd FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 " running
 autocmd FileType python noremap <leader>m :!/usr/bin/env python % <CR>
 
+" ================ Moving the navigational keys to the home row  ========================
+noremap ø l
+noremap l k
+noremap k j
+noremap j h
+
 " ================ Remaps  ========================
 
 map <C-\>       :exec("tag ".expand("<cword>"))<CR>

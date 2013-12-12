@@ -1,7 +1,7 @@
 #####################################
 # Install basic zsh settings
 #####################################
-ln -s `pwd`/zshrc.symlink ~/.zshrc
-ln -s `pwd`/zsh.symlink ~/.zsh
+cp -v `pwd`/zshrc.symlink ~/.zshrc
+cp -rvuT `pwd`/zsh.symlink ~/.zsh
 
 
