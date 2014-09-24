@@ -53,6 +53,14 @@ function! FFind(...)
 
     let l:list=system(l:cmd)
 
+    if strlen(l:list)==0
+        echohl WarningMsg | 
+        \ echomsg 'No hits!' | 
+        \ echohl None
+        return
+    endif
+
+
     let tmpfile = tempname()
     exe "redir! > " . tmpfile
     silent echon l:list
@@ -86,10 +94,6 @@ function! RunFFindPattern(...)
 
   if(empty(l:pat)) | return | endif 
   
-  if a:0==1
-    exec(a:1)
-  endif
-  
   call FFind(g:ffind_incl_files, l:pat)
 endfunction
 
@@ -98,15 +102,38 @@ function! RunFFindFile(...)
 
   if(empty(l:pat)) | return | endif 
   
-  if a:0==1
-    exec(a:1)
-  endif
-  
   call FFind(l:pat)
 endfunction
 
-nmap <silent> <leader>g :call RunFFindPattern('tabe')<CR> 
-nmap <silent> <leader>f :call RunFFindFile('tabe')<CR> 
+function! RunFFindPatternInFile(...)
+  let l:file = input("Enter file pattern: ")
+  if(empty(l:file)) | let l:file=g:ffind_incl_files | endif 
+
+  let l:pat = input("Enter pattern: ")
+  if(empty(l:pat)) | return | endif 
+  
+  call FFind(l:file, l:pat)
+endfunction
+
+function! ToggleLoc()
+  try
+    if exists('t:loc_open') && t:loc_open == 0
+      exec('botright lopen')
+    else
+      exec('lclose')
+    endif
+    let t:loc_open = exists('t:loc_open') ? !t:loc_open : 0
+  catch
+    echon "No location list"
+  endtry
+endfunction
+
+
+nmap <silent> <leader>g :call RunFFindPattern()<CR> 
+nmap <silent> <leader>t :call RunFFindFile()<CR> 
+nmap <silent> <leader>l :call ToggleLoc()<CR>
 
 " search for word under cursor
-nnoremap <F2> :call FFind(g:ffind_incl_files, shellescape(expand("<cword>"),1))<CR>
+nnoremap <F2> :call FFind(g:ffind_incl_files, expand("<cword>"))<CR>
+nnoremap <F3> :call FFind(expand("<cword>"))<CR>
+command! -nargs=* FF :call FFind(g:ffind_incl_files, <f-args>)

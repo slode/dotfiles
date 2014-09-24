@@ -19,8 +19,9 @@ set autoread                    "Reload files changed outside vim
 set fileformats=unix,dos
 set encoding=utf-8
 set nuw=6                       "Number column width
-
+set timeout timeoutlen=1000 ttimeoutlen=100 " Key press timeouts.
 let mapleader=','
+set switchbuf+=usetab,newtab    "Open new buffers in new tab, or, if already open, move to tab
 
 " ================ Navigation Settings  =================
 set whichwrap=<,>,[,]
@@ -150,6 +151,7 @@ endif
 
 colorscheme solarized
 set background=light
+set background=dark
 
 " ================ OmniComplete ========================
 
@@ -178,6 +180,11 @@ if has('gui_running')
   set background=dark
 endif
 "
+" ================ quickfix(qf)  ===============
+autocmd! FileType qf nnoremap <buffer> <leader><Enter> <Enter>:exe "tabn ".g:lasttab<CR>
+let g:lasttab = 1
+au TabLeave * let g:lasttab = tabpagenr()
+
 " ================ php  ========================
 
 " run file with PHP CLI (CTRL-K)
@@ -196,12 +203,12 @@ autocmd FileType cpp,cc,c,h,hh,hpp setlocal cindent cino=N-s,g-s,t0,+2s,
 
 autocmd FileType make setlocal noexpandtab
 
-" ================ Javascript ========================
+" ================ Javascript ===================
 
 " indent
 au FileType javascript setlocal nocindent
 
-" ================ Python ========================
+" ================ Python =======================
  
 " indent
 autocmd FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
@@ -210,10 +217,21 @@ autocmd FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 autocmd FileType python noremap <leader>m :!/usr/bin/env python % <CR>
 
 " ================ Moving the navigational keys to the home row  ========================
-noremap ø l
-noremap l k
-noremap k j
-noremap j h
+"noremap ø l
+"noremap l k
+"noremap k j
+"noremap j h
+
+nnoremap j gj
+nnoremap k gk
+vnoremap j gj
+vnoremap k gk
+nnoremap <Down> gj
+nnoremap <Up> gk
+vnoremap <Down> gj
+vnoremap <Up> gk
+inoremap <Down> <C-o>gj
+inoremap <Up> <C-o>gk
 
 " ================ Remaps  ========================
 
@@ -233,7 +251,6 @@ nmap <S-F9>     :%s/\s\+$//<cr>
 " space toggles folding
 nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
 
-
 " ================ Default tag files  ========================
 
 set tags+=~/.tags
@@ -241,7 +258,6 @@ set tags+=./tags;/
 
 " ================ Sourcing .vimrc  ========================
 au! BufWritePost .vimrc source %
-
 
 " ================ Sourcing .vimrc.local  ========================
 if filereadable("~/.vimrc.local")
