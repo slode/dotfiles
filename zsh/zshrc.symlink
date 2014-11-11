@@ -15,12 +15,13 @@ HISTFILE=~/.histfile
 HISTSIZE=10000
 SAVEHIST=10000
 
+bindkey '^[[Z' reverse-menu-complete
 
 #------------------------------
 # Enable meta-key, disable utf8?
 #------------------------------
 #unsetopt MULTIBYTE
-
+autoload -U colors && colors
 
 #------------------------------
 # Word chars
@@ -36,12 +37,24 @@ export EDITOR="vim"
 export PAGER="less"
 export PATH="$HOME/bin:$PATH"
 
+#-----------------------------
+# Edit command line in vim
+#-----------------------------
+export VISUAL=vim
+autoload edit-command-line; zle -N edit-command-line
+bindkey -M vicmd v edit-command-line
 
 #-----------------------------
 # Share history | add before exec
 #-----------------------------
 setopt inc_append_history
 setopt share_history
+
+#-----------------------------
+# Enable extensive globbing
+#-----------------------------
+setopt extended_glob
+unsetopt nomatch
 
 #------------------------------
 # Comp stuff
@@ -51,24 +64,56 @@ autoload -Uz compinit
 compinit
 zstyle :compinstall filename '${HOME}/.zshrc'
 
-#- buggy
-zstyle ':completion:*:descriptions' format '%U%B%d%b%u'
-zstyle ':completion:*:warnings' format '%BSorry, no matches for: %d%b'
-#-/buggy
+# man zshcontrib
+zstyle ':vcs_info:*' actionformats '%F{5}(%f%s%F{5})%F{3}-%F{5}[%F{2}%b%F{3}|%F{1}%a%F{5}]%f '
+zstyle ':vcs_info:*' formats '%F{5}(%f%s%F{5})%F{3}-%F{5}[%F{2}%b%F{5}]%f '
+zstyle ':vcs_info:*' enable git #svn cvs 
+
+# Enable completion caching, use rehash to clear
+zstyle ':completion::complete:*' use-cache on
+zstyle ':completion::complete:*' cache-path ~/.zsh/cache/$HOST
+
+# Fallback to built in ls colors
+zstyle ':completion:*' list-colors ''
+
+# Make the list prompt friendly
+zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
+
+# Make the selection prompt friendly when there are a lot of choices
+zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
+
+# Add simple colors to kill
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+
+# list of completers to use
+zstyle ':completion:*::::' completer _expand _complete _ignored _approximate
+
+zstyle ':completion:*' menu select=1 _complete _ignored _approximate
+
+# match uppercase from lowercase
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+ 
+# offer indexes before parameters in subscripts
+zstyle ':completion:*:*:-subscript-:*' tag-order indexes parameters
+
+# formatting and messages
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:warnings' format 'No matches for: %d'
+zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
+zstyle ':completion:*' group-name ''
+ 
+# ignore completion functions (until the _ignored completer)
+zstyle ':completion:*:functions' ignored-patterns '_*'
+zstyle ':completion:*:scp:*' tag-order files users 'hosts:-host hosts:-domain:domain hosts:-ipaddr"IP\ Address *'
+zstyle ':completion:*:scp:*' group-order files all-files users hosts-domain hosts-host hosts-ipaddr
+zstyle ':completion:*:ssh:*' tag-order users 'hosts:-host hosts:-domain:domain hosts:-ipaddr"IP\ Address *'
+zstyle ':completion:*:ssh:*' group-order hosts-domain hosts-host users hosts-ipaddr
+zstyle '*' single-ignored show
 
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors ''
-
-# menu-completion for kill
-zstyle ':completion:*:*:kill:*' menu yes select
-zstyle ':completion:*:kill:*'   force-list always
-
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
-zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
-
-#menu-completion for killall
-zstyle ':completion:*:*:killall:*' menu yes select
-zstyle ':completion:*:killall:*'   force-list always
 
 # Adds '/' to '..'
 zstyle -e ':completion:*' special-dirs '[[ $PREFIX = (../)#(|.|..) ]] && reply=(..)'
@@ -76,16 +121,6 @@ zstyle -e ':completion:*' special-dirs '[[ $PREFIX = (../)#(|.|..) ]] && reply=(
 #General settings
 zstyle ':completion:*' auto-description 'specify: %d'
 zstyle ':completion:*' completer _expand _complete _correct _approximate
-zstyle ':completion:*' format 'Completing %d'
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-zstyle ':completion:*' menu select=10 search list-dirs-first yes eval "$(dircolors -b)"
-zstyle ':completion:*' rehash yes
-zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-zstyle ':completion:*' use-compctl false
-zstyle ':completion:*' verbose yes
-zstyle -e ':completion:*' special-dirs '[[ $PREFIX = (../)#(|.|..) ]] && reply=(..)'
 
 #------------------------------
 # Window title
@@ -111,46 +146,25 @@ case $TERM in
 esac
 export TERM
 
-#------------------------------
-# Prompt
-#------------------------------
-setprompt () {
-	# load some modules
-	autoload -U colors zsh/terminfo # Used in the colour alias below
-	colors
-	setopt prompt_subst
-
-	# make some aliases for the colours: (coud use normal escap.seq's too)
-	for color in RED GREEN YELLOW BLUE MAGENTA CYAN WHITE; do
-		eval PR_$color='%{$fg[${(L)color}]%}'
-	done
-	PR_NO_COLOR="%{$terminfo[sgr0]%}"
-
-	# Check the UID
-	if [[ $UID -ge 1000 ]]; then # normal user
-		eval PR_USER='${PR_GREEN}%n${PR_NO_COLOR}'
-		eval PR_USER_OP='${PR_GREEN}%#${PR_NO_COLOR}'
-	elif [[ $UID -eq 0 ]]; then # root
-		eval PR_USER='${PR_RED}%n${PR_NO_COLOR}'
-		eval PR_USER_OP='${PR_RED}%#${PR_NO_COLOR}'
-	fi	
-
-	# Check if we are on SSH or not
-	if [[ -n "$SSH_CLIENT"  ||  -n "$SSH2_CLIENT" ]]; then 
-		eval PR_HOST='${PR_YELLOW}%M${PR_NO_COLOR}' #SSH
-	else 
-		eval PR_HOST='${PR_GREEN}%M${PR_NO_COLOR}' # no SSH
-	fi
-	# set the prompt
-	PS1=$'${PR_CYAN}[${PR_USER}${PR_CYAN}@${PR_HOST}${PR_CYAN}][${PR_BLUE}%~${PR_CYAN}][%D %T]${PR_USER_OP} '
-	PS2=$'%_>'
-}
-#setprompt
-
 source ~/.zsh/zshrc
 
 [[ -s $HOME/.zshrc.local ]] && source "$HOME/.zshrc.local"
 
+PROMPT=
+PROMPT+="[$(colorword 'cyan')%n"
+PROMPT+="$(colorword 'green')@"
+PROMPT+="$(colorword 'magenta')%m$(reset)]"
+PROMPT+='$(git_super_status)'
+PROMPT+="[$(colorword 'blue')%4(c:.../:)%3c$(reset)]"    # path
+PROMPT+="$(colorword 'black')%#$(reset) "                 # prompt
+
+local p_date p_line p_rc
+p_date="$(colorword 'magenta')%D{%Y-%m-%d} $(colorword 'green')%D{%T}$(colorword . . 00)"
+p_line="$(colorword 'cyan')%y$(reset)"
+RPROMPT+="$p_date "
+RPROMPT+="$p_line"
+
+export PROMPT RPROMPT
 #-----------------------------
 # Dircolors
 #-----------------------------

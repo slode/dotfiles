@@ -41,6 +41,7 @@ GIT=`which git`
 
 PACKAGES="https://github.com/tpope/vim-pathogen.git
 https://github.com/jceb/vim-orgmode.git
+https://github.com/tpope/vim-speeddating.git
 https://github.com/kien/ctrlp.vim.git
 https://github.com/nvie/vim-flake8.git
 https://github.com/skwp/YankRing.vim.git
@@ -58,6 +59,7 @@ https://github.com/xuhdev/SingleCompile.git
 https://github.com/vim-scripts/taglist.vim.git
 https://github.com/jistr/vim-nerdtree-tabs.git
 https://github.com/skwp/vim-colors-solarized.git
+https://github.com/zah/nimrod.vim.git
 https://github.com/sjl/gundo.vim.git"
 
 echo
