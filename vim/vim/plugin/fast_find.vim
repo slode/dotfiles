@@ -1,5 +1,3 @@
-"let g:fast_find_excl_path = ['./build', './test', './.git', '.*/Zend', './.sass-cache']
-"let g:fast_find_excl_path = []
 let g:ffind_excl_files = ['*.swp', '*~', '*.pyc', '*.so', '*.gif', '*.png']
 let g:ffind_incl_files = ['*.c', '*.hh', 'scons*', '*.py', '*.cpp', '*.h', '*.hpp', '*.php','*.js','*.css','*.html','*.scss']
 let g:ffind_path = '.'
@@ -11,7 +9,6 @@ function! FFind(...)
     let l:expaths = exists('g:ffind_excl_path') ? " \\( -path " . join(g:ffind_excl_path, " -o -path ")." \\) -prune -o" : ''
     let l:exfiles = exists('g:ffind_excl_files') ? " -not \\( -iname '".join(g:ffind_excl_files, "' -o -iname '")."'  \\) " : ''
 
-    "let path=exists('g:find_path') ? g:find_path : "."
     let l:path=exists('g:ffind_path') ? g:ffind_path : '.'
 
     if a:0==0
@@ -66,6 +63,15 @@ function! FFind(...)
     silent echon l:list
     redir END
 
+    let l:top=system("head -n 5 " . tmpfile)
+    let l:num=strlen(substitute(l:top, "[^\n]", "", "g"))
+
+    if l:num == 1
+      exe "open " . substitute(l:list, "\n", "", "g")
+      call delete(tmpfile)
+      return
+    endif
+
     let old_efm = &efm
     set efm=%f
     if exists('l:string_pattern')
@@ -115,6 +121,15 @@ function! RunFFindPatternInFile(...)
   call FFind(l:file, l:pat)
 endfunction
 
+function! SwitchSourceHeader()
+  let l:bn = expand("%:t:r")
+  if (expand ("%:e") == "cpp")
+    call FFind([l:bn.".h", l:bn.".hpp"])
+  else
+    call FFind([l:bn.".cpp", l:bn.".cc", l:bn.".c"])
+  endif
+endfunction
+
 function! ToggleLoc()
   try
     if exists('t:loc_open') && t:loc_open == 0
@@ -128,7 +143,6 @@ function! ToggleLoc()
   endtry
 endfunction
 
-
 nmap <silent> <leader>g :call RunFFindPattern()<CR> 
 nmap <silent> <leader>t :call RunFFindFile()<CR> 
 nmap <silent> <leader>l :call ToggleLoc()<CR>
@@ -136,4 +150,5 @@ nmap <silent> <leader>l :call ToggleLoc()<CR>
 " search for word under cursor
 nnoremap <F2> :call FFind(g:ffind_incl_files, expand("<cword>"))<CR>
 nnoremap <F3> :call FFind(expand("<cword>"))<CR>
+nnoremap <F4> :call SwitchSourceHeader()<CR>
 command! -nargs=* FF :call FFind(g:ffind_incl_files, <f-args>)
