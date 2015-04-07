@@ -1,12 +1,13 @@
 let g:ffind_excl_files = ['*.swp', '*~', '*.pyc', '*.so', '*.gif', '*.png']
 let g:ffind_incl_files = ['*.c', '*.hh', 'scons*', '*.py', '*.cpp', '*.h', '*.hpp', '*.php','*.js','*.css','*.html','*.scss']
+let g:ffind_excl_path = ['./dbexch*']
 let g:ffind_path = '.'
 
 function! FFind(...)
     " Timing the search
     let l:start=reltime()
 
-    let l:expaths = exists('g:ffind_excl_path') ? " \\( -path " . join(g:ffind_excl_path, " -o -path ")." \\) -prune -o" : ''
+    let l:expaths = exists('g:ffind_excl_path') ? "  \\( -path '" . join(g:ffind_excl_path, "' -o -path '")."' \\) -prune -o" : ''
     let l:exfiles = exists('g:ffind_excl_files') ? " -not \\( -iname '".join(g:ffind_excl_files, "' -o -iname '")."'  \\) " : ''
 
     let l:path=exists('g:ffind_path') ? g:ffind_path : '.'
@@ -22,7 +23,7 @@ function! FFind(...)
       let l:string_pattern=a:2
     endif
     
-    if type(a:1) == type([])
+    if type(a:1)==type([])
       let l:path_pattern=" \\( -iname \"" . join(a:1, "\" -o -iname \"")."\" \\) "
     else
       let l:path_pattern = " -iname \"*" . substitute(a:1, "^\\s\\+\\|\\s\\+$","", "g") . "*\""
@@ -36,7 +37,7 @@ function! FFind(...)
     endif
 
     let l:find_cmd=" find . " . l:expaths . " " . l:exfiles . " " . l:path_pattern . " -print "
-    let l:xargs_cmd=executable("parallel") ? " parallel -j150% -n 1000 " : " xargs "  
+    let l:xargs_cmd=executable("parallel") ? " parallel -j150% -n 1000 --gnu " : " xargs "  
     let l:grep_cmd=exists('l:string_pattern') ? " | " . l:xargs_cmd . " grep -inHn -m1 " . l:string_pattern . " \"{}\" " : ""
     let l:sort_cmd=" | sort " 
     
@@ -58,21 +59,12 @@ function! FFind(...)
     endif
 
 
-    let tmpfile = tempname()
+    let tmpfile=tempname()
     exe "redir! > " . tmpfile
     silent echon l:list
     redir END
 
-    let l:top=system("head -n 5 " . tmpfile)
-    let l:num=strlen(substitute(l:top, "[^\n]", "", "g"))
-
-    if l:num == 1
-      exe "open " . substitute(l:list, "\n", "", "g")
-      call delete(tmpfile)
-      return
-    endif
-
-    let old_efm = &efm
+    let old_efm=&efm
     set efm=%f
     if exists('l:string_pattern')
       set efm=%f:%\\s%#%l:%m
@@ -84,7 +76,7 @@ function! FFind(...)
       execute "silent! lfile " . tmpfile
     endif
 
-    let &efm = old_efm
+    let &efm=old_efm
 
     " Open the quickfix window below the current window
     botright lopen
@@ -92,6 +84,7 @@ function! FFind(...)
     call delete(tmpfile)
     let l:time=reltimestr(reltime(l:start))
     echo "Execution took " . l:time . " sec."
+    redraw
 endfunction
 
 
