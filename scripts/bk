@@ -1,0 +1,9 @@
+#/bin/sh
+
+if [[ $1 == *.bk ]]
+then
+  mv -bi "$1" $(basename $1 .bk)
+else
+  mv -bi "$1" "$1.bk"
+fi
+
