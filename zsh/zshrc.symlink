@@ -146,23 +146,31 @@ case $TERM in
 esac
 export TERM
 
+if [[ -n "$TMUX" ]]; then
+  bindkey "\e[1~" beginning-of-line
+  bindkey "\e[4~" end-of-line
+fi
+
 source ~/.zsh/zshrc
 
 [[ -s $HOME/.zshrc.local ]] && source "$HOME/.zshrc.local"
 
 PROMPT=
-PROMPT+="[$(colorword 'cyan')%n"
+PROMPT+="$(colorword 'cyan')%n"
 PROMPT+="$(colorword 'green')@"
-PROMPT+="$(colorword 'magenta')%m$(reset)]"
-PROMPT+='$(git_super_status)'
-PROMPT+="[$(colorword 'blue')%4(c:.../:)%3c$(reset)]"    # path
-PROMPT+="$(colorword 'black')%#$(reset) "                 # prompt
+PROMPT+="$(colorword 'magenta')%m$(reset)"
+#PROMPT+='$(git_super_status)'
+PROMPT+="[$(colorword 'blue')%4(c:.../:)%2c$(reset)]"    # path
+PROMPT+="$(colorword 'white')%#$(reset) "                 # prompt
 
 local p_date p_line p_rc
-p_date="$(colorword 'magenta')%D{%Y-%m-%d} $(colorword 'green')%D{%T}$(colorword . . 00)"
-p_line="$(colorword 'cyan')%y$(reset)"
-RPROMPT+="$p_date "
-RPROMPT+="$p_line"
+p_date="$(colorword 'magenta')%D{%d/%m}-$(colorword 'green')%D{%H:%M}"
+#p_line="$(colorword 'cyan')%y
+RPROMPT=
+RPROMPT+="$p_date"
+#RPROMPT+=" $p_line"
+RPROMPT+="~$SHLVL"
+RPROMPT+="$(reset)"
 
 export PROMPT RPROMPT
 #-----------------------------
