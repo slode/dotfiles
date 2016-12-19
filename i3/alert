@@ -1,0 +1,16 @@
+#!/bin/bash
+
+WIDTH=300
+HEIGHT=50
+
+# This script shows an alert using dzen
+screenWidth=1920 #$(xdpyinfo | grep 'dimensions' | egrep -o "[0-9]+x[0-9]+ pixels" | sed "s/x.*//")
+screenHeight=1200 ##$(xdpyinfo | grep 'dimensions' | egrep -o "[1-9]+x[0-9]+ pixels" | egrep -o "x[0-9]*" | sed "s/x//")
+let "middleY = $screenHeight / 2 - ($HEIGHT/2)"
+let "middleX = $screenWidth / 2 - ($WIDTH/2)"
+let "middleX2 = $screenWidth + $middleX"
+
+DZEN=dzen2
+
+echo $1 | $DZEN -fn "DejaVu Sans Mono 8" -p $2 -y $middleY -x $middleX -h $HEIGHT -w $WIDTH &
+echo $1 | $DZEN -fn "DejaVu Sans Mono 8" -p $2 -y $middleY -x $middleX2 -h $HEIGHT -w $WIDTH &
