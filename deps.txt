@@ -1,0 +1,20 @@
+#less, ranger etc.
+install source-highlight
+
+# i3
+install i3*
+
+#dzen2
+install imlib2
+install imlib2-devel
+install libXinerama-devel libx11-devel
+install libpng-devel
+install libcurl-devel
+install libXt-devel
+
+#misc. x11
+install rxvt-unicode-256color-ml
+install xfontsel
+
+#vim fast_find
+install parallel
