@@ -14,11 +14,11 @@ focus_follows_mouse no
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:monospace 8
+#font pango:monospace 8
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
+font pango:DejaVu Sans Mono 10
 
 exec --no-startup-id feh --bg-scale ~/.wallpaper.png
 
@@ -213,23 +213,8 @@ bindsym XF86AudioMute exec $volumepath/volume -m -n -t $statuscmd -u $statussig
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-bar {
-    colors {
-      background #002b36
-      statusline #fdf6e3
-      separator #859900
-
-      focused_workspace  #008fff #007fff #fdf6e3
-      active_workspace   #333333 #5f676a #fdf6e3
-      inactive_workspace #333333 #222222 #888888
-      urgent_workspace   #aa0000 #990000 #fdf6e3
-
-    }
-  position bottom #top
-  status_command i3status -c ~/.i3/i3status.conf
-}
-
 # Colors
+
 set $base03  #002b36
 set $base02  #073642
 set $base01  #586e75
@@ -247,9 +232,25 @@ set $blue    #268bd2
 set $cyan    #2aa198
 set $green   #859900
 
-client.focused $magenta $magenta #fdf6e3
-client.unfocused $base02 $base02 #fdf6e3
-client.urgent #aa0000 #990000 #fdf6e3
+bar {
+    colors {
+      background #002b36
+      statusline #839496
+      separator #859900
+
+      focused_workspace  $magenta $magenta $base3
+      active_workspace   $base02  $base02  $base3
+      inactive_workspace $base02  $base02  $base3
+      urgent_workspace   $red     $red     $base3
+    }
+  position bottom
+  status_command i3status -c ~/.i3/i3status.conf | tee ~/tmp
+}
+
+
+client.focused    $magenta $magenta $base3
+client.unfocused  $base02 $base02 $base3
+client.urgent     $red $red $base3
 
 #######################################################################
 # automatically start i3-config-wizard to offer the user to create a
