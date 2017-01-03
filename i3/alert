@@ -11,6 +11,11 @@ let "middleX = $screenWidth / 2 - ($WIDTH/2)"
 let "middleX2 = $screenWidth + $middleX"
 
 DZEN=dzen2
+ 
+DURATION=${2:-3}
 
-echo $1 | $DZEN -fn "DejaVu Sans Mono 8" -p $2 -y $middleY -x $middleX -h $HEIGHT -w $WIDTH &
-echo $1 | $DZEN -fn "DejaVu Sans Mono 8" -p $2 -y $middleY -x $middleX2 -h $HEIGHT -w $WIDTH &
+echo $1 | $DZEN -fn "DejaVu Sans Mono 12" -p $DURATION -y $middleY -x $middleX -h $HEIGHT -w $WIDTH &
+echo $1 | $DZEN -fn "DejaVu Sans Mono 12" -p $DURATION -y $middleY -x $middleX2 -h $HEIGHT -w $WIDTH &
+
+#echo $1 | $DZEN -fn "DejaVu Sans Mono 8" -p $DURATION -x 0 -w $screenWidth &
+#echo $1 | $DZEN -fn "DejaVu Sans Mono 8" -p $DURATION -x $screenWidth -w $screenWidth &
