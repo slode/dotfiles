@@ -40,7 +40,7 @@ set $mod Mod4
 # font pango:Noto Mono Regular 13
 # font pango:DroidSansMono 13
 #font pango:Noto Mono Regular 13
-font pango:DejaVu Sans Mono, Awesome 15 
+font pango:DejaVu Sans Mono, Awesome 12
 
 
 ###################       STOPPING A PROGRAM      ##############################
