@@ -105,7 +105,7 @@ is_muted() {
 
 # Display a notification indicating the volume is muted.
 notify_muted() {
-    notify-send -i sound -t 2000 "Volume muted"
+    ~/.config/i3/notify-send -r 1234 -i sound -t 2 "Volume muted"
     #~/.config/i3/alert -t=1000 "Volume muted"
 }
 
@@ -116,7 +116,7 @@ notify_muted() {
 notify_volume() {
     local sink="$1"
     vol=$(get_volume "$sink")
-    notify-send -i sound -t 2000 "Volume ${vol}"
+    ~/.config/i3/notify-send -r 1234 -i sound -t 2 "Volume ${vol}"
     #    ~/.config/i3/alert "Volume ${vol}" 1
 }
 

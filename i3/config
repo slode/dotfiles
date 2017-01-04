@@ -82,6 +82,10 @@ bindsym $mod+Shift+Right move right
 # move between workspaces
 bindsym $mod+Tab workspace next
 bindsym $mod+Shift+Tab workspace prev
+
+bindsym ctrl+$mod+Left workspace prev
+bindsym ctrl+$mod+Right workspace next
+
 workspace_auto_back_and_forth yes
 
 # split in horizontal orientation
@@ -117,10 +121,13 @@ bindsym $mod+Shift+minus move scratchpad
 # If there are multiple scratchpad windows, this command cycles through them.
 bindsym $mod+minus scratchpad show
 
+set $output1 "DVI-I-1" 
+set $output2 "DP-1" 
+
 set $tag1  "1: "
 set $tag2  "2: "
-set $tag3  "3: rms"
-set $tag4  "4: "
+set $tag3  "3: "
+set $tag4  "4: rms"
 set $tag5  "5: "
 set $tag6  "6: "
 set $tag8  "8: "
@@ -128,6 +135,18 @@ set $tag7  "7: "
 set $tag8  "8: "
 set $tag9  "9: "
 set $tag10 "10: "
+
+workspace $tag1 output $output1
+workspace $tag3 output $output1
+workspace $tag5 output $output1
+workspace $tag7 output $output1
+workspace $tag9 output $output1
+
+workspace $tag2 output $output2
+workspace $tag4 output $output2
+workspace $tag6 output $output2
+workspace $tag8 output $output2
+workspace $tag10 output $output2
 
 # switch to workspace
 bindsym $mod+1 workspace $tag1
@@ -271,11 +290,12 @@ client.urgent     $red $red $base3
 
 
 # force floating for all new windows
-assign [class="rms"] $tag3
+assign [class="rms"] $tag4
 assign [class="Firefox*"] $tag2
 for_window [class="busyprocess"] floating enable
 for_window [class="Tk"] floating enable
 
 #exec i3-config-wizard
 exec --no-startup-id feh --bg-scale ~/.wallpaper.png
-exec --no-startup-id python2 ~/.config/dzen2_notify/dzen2_notify_daemon.py
+#exec --no-startup-id python2 ~/.config/dzen2_notify/dzen2_notify_daemon.py
+exec dunst -config ~/.config/i3/dunstrc
