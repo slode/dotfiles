@@ -1,5 +1,5 @@
 [global]
-font = DejaVu Sans Mono Regular 13
+font = DejaVu Sans Mono Book 15
 
 # Allow a small subset of html markup:
 #   <b>bold</b>
@@ -175,17 +175,17 @@ context = ctrl+shift+period
 [urgency_low]
 # IMPORTANT: colors have to be defined in quotation marks.
 # Otherwise the "#" and following would be interpreted as a comment.
-background = "#002b36"
+background = "#859900"
 foreground = "#fdf6e3"
 timeout = 3
 
 [urgency_normal]
-background = "#002b36"
+background = "#859900"
 foreground = "#fdf6e3"
 timeout = 3
 
 [urgency_critical]
-background = "#dc322f"
+background = "#dc323f"
 foreground = "#fdf6e3"
 timeout = 10
 
@@ -243,4 +243,3 @@ timeout = 10
 #    urgency = normal
 #
 # vim: ft=cfg
-
