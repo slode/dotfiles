@@ -141,6 +141,9 @@ set title
 " Use the OS clipboard by default (on versions compiled with `+clipboard`)
 set clipboard=unnamed
 
+" To enable the use of aliases in the :! mode
+"set shell=$SHELL\ -i
+
 " ================ Terminal Hacks ========================
 
 if $COLORTERM == 'gnome-terminal'
@@ -150,8 +153,11 @@ endif
 " ================ Colorschemes ========================
 
 colorscheme solarized
-set background=light
 set background=dark
+"set background=light
+hi Normal ctermfg=None ctermbg=None
+hi LineNr ctermfg=None 
+hi NonText ctermfg=None ctermbg=None
 
 " ================ OmniComplete ========================
 
@@ -175,7 +181,7 @@ if has('gui_running')
   set guioptions-=TmRrbLle
 
   " a => global visual copy/cut
-  set guioptions+=ac
+  set guioptions+=aAc
   set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 11
   set background=dark
 endif
@@ -199,6 +205,8 @@ au TabLeave * let g:lasttab = tabpagenr()
 
 " ================ C++  ========================
 autocmd FileType cpp,cc,c,h,hh,hpp setlocal cindent cino=N-s,g-s,t0,+2s,
+" build tags of your own project with Ctrl-F12
+map <C-F12> :!ctags -R --sort=yes --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
 " ================ Make  ========================
 
 autocmd FileType make setlocal noexpandtab
@@ -215,6 +223,7 @@ autocmd FileType python setlocal tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
 " running
 autocmd FileType python noremap <leader>m :!/usr/bin/env python % <CR>
+
 
 " ================ Moving the navigational keys to the home row  ========================
 "noremap ø l
@@ -250,6 +259,11 @@ nmap <S-F9>     :%s/\s\+$//<cr>
 
 " space toggles folding
 nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
+
+" ================ xclip copy paste  ========================
+
+vmap <leader>c   :!xclip -f -sel clip<CR>
+map <leader>p   :-1r !xclip -o -sel clip<CR>
 
 " ================ Default tag files  ========================
 
