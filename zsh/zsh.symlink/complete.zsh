@@ -60,4 +60,4 @@ zstyle -e ':completion:*' special-dirs '[[ $PREFIX = (../)#(|.|..) ]] && reply=(
 
 #General settings
 zstyle ':completion:*' auto-description 'specify: %d'
-zstyle ':completion:*' completer _expand _complete _correct _approximate
+zstyle ':completion:*' completer _expand _files _complete _correct _approximate
