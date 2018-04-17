@@ -1,6 +1,6 @@
 let g:ffind_excl_files = ['*.swp', '*~', '*.pyc', '*.so', '*.gif', '*.png']
-let g:ffind_incl_files = ['*.c', '*.hh', 'scons*', '*.py', '*.cpp', '*.h', '*.hpp', '*.php','*.js','*.css','*.html','*.scss']
-let g:ffind_excl_path = ['./dbexch*']
+let g:ffind_incl_files = ['*.c', '*.hh', 'scons*', '*.py', '*.cpp', '*.h', '*.hpp', '*.php','*.js','*.css','*.html','*.scss', '*cmake']
+let g:ffind_excl_path = ['./dbexch*', './.git']
 let g:ffind_path = '.'
 
 function! FFind(...)
@@ -40,29 +40,22 @@ function! FFind(...)
     let l:xargs_cmd=executable("parallel") ? " parallel -j150% -n 1000 --gnu " : " xargs "  
     let l:grep_cmd=exists('l:string_pattern') ? " | " . l:xargs_cmd . " grep -inHn -m1 " . l:string_pattern . " \"{}\" " : ""
     let l:sort_cmd=" | sort " 
+
+    let l:tmpfile=tempname()
+    let l:redirect=" > " . l:tmpfile
     
-    let l:cmd = l:find_cmd . l:grep_cmd . l:sort_cmd
+    let l:cmd = l:find_cmd . l:grep_cmd . l:sort_cmd . l:redirect
+
+    echohl WarningMsg | echomsg "..." | echohl None | redraw
 
     if exists('l:string_pattern')
-      echohl WarningMsg | echomsg "Searching in " . string(a:1) . " for " .  l:string_pattern . "" | echohl None
+      echohl WarningMsg | echomsg "Searching in " . string(a:1) . " for " .  l:string_pattern . "" | echohl None | redraw
     else
-      echohl WarningMsg | echomsg "Searching for " . string(a:1) . "" | echohl None
+      echohl WarningMsg | echomsg "Searching for " . string(a:1) . "" | echohl None | redraw
     endif
 
-    let l:list=system(l:cmd)
-
-    if strlen(l:list)==0
-        echohl WarningMsg | 
-        \ echomsg 'No hits!' | 
-        \ echohl None
-        return
-    endif
-
-
-    let tmpfile=tempname()
-    exe "redir! > " . tmpfile
-    silent echon l:list
-    redir END
+    " launch search
+    let l:_tmp=system(l:cmd)
 
     let old_efm=&efm
     set efm=%f
@@ -78,12 +71,12 @@ function! FFind(...)
 
     let &efm=old_efm
 
-    " Open the quickfix window below the current window
     botright lopen
 
     call delete(tmpfile)
     let l:time=reltimestr(reltime(l:start))
-    echo "Execution took " . l:time . " sec."
+
+    echohl WarningMsg | echo "Execution took " . l:time . " sec." | echohl None | redraw
     redraw
 endfunction
 

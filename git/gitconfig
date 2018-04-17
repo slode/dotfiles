@@ -22,13 +22,15 @@
 [alias]
 	st = status
 	ci = commit
-	co = checkout
 	br = branch
+	co = checkout
+  df = diff
+  ds = diff --staged
+	lg = log --pretty=oneline --abbrev-commit
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit
+	lola = log --graph --decorate --pretty=oneline --abbrev-commit --all
 	cp = cherry-pick
 	cps = cherry-pick -s
-	slog = log --pretty=oneline --abbrev-commit
-	glog = log --graph --decorate --pretty=oneline --abbrev-commit
-	gloga = log --graph --decorate --pretty=oneline --abbrev-commit --all
 	unci = reset HEAD^
 	uncommit = reset HEAD^
 	ls = ls-files
