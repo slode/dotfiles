@@ -43,6 +43,7 @@ PACKAGES="https://github.com/tpope/vim-pathogen.git
 https://github.com/jceb/vim-orgmode.git
 https://github.com/tpope/vim-speeddating.git
 https://github.com/kien/ctrlp.vim.git
+https://github.com/slode/vim-fast-search.git
 https://github.com/nvie/vim-flake8.git
 https://github.com/skwp/YankRing.vim.git
 https://github.com/vim-scripts/Ada-Bundle.git

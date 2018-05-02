@@ -1,0 +1,7 @@
+#!/bin/bash
+# create temporary file
+TMPFILE=`mktemp /tmp/vipe.bashXXXXXXXX`
+cat > ${TMPFILE}
+vim ${TMPFILE} < /dev/tty > /dev/tty
+cat ${TMPFILE}
+rm ${TMPFILE}

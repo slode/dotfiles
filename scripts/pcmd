@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+
+def print_cmd(command, line_length=80, indent="    "):
+    import sys, textwrap
+    lines = textwrap.wrap(
+        command,
+        width=line_length,
+        subsequent_indent=" \\\n" + indent,
+        break_long_words=False,
+        break_on_hyphens=False)
+
+    for line in lines:
+        sys.stdout.write(line)
+    sys.stdout.write("\n")
+
+if __name__ == "__main__":
+    import sys
+    print_cmd(" ".join(sys.argv[1:]))

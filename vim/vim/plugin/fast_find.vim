@@ -125,7 +125,7 @@ function! ToggleLoc()
     endif
     let t:loc_open = exists('t:loc_open') ? !t:loc_open : 0
   catch
-    echon "No location list"
+    echohl WarningMsg | echo "No location list." | echohl None | redraw
   endtry
 endfunction
 
