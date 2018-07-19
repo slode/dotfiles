@@ -1,0 +1,2 @@
+#include ".Xresources.d/defaults"
+#include ".Xresources.d/solarized/Xresources.light"
