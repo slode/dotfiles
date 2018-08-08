@@ -2,20 +2,22 @@
 ! Xft settings
 !-------------------------------------------------------------------------------
 
-Xft.dpi:                    96
-Xft.antialias:              false
+!Xft.dpi:                    96
+!Xft.dpi:                   166
+Xft.dpi:                    122
+Xft.antialias:              true
+!Xft.antialias:              false
 Xft.rgba:                   rgb
 Xft.hinting:                true
+Xft.autohint:               true
 Xft.hintstyle:              hintslight
 
 !-------------------------------------------------------------------------------
 ! URxvt settings
-! Colours lifted from Solarized (http://ethanschoonover.com/solarized)
-! More info at:
-! http://pod.tst.eu/http://cvs.schmorp.de/rxvt-unicode/doc/rxvt.1.pod
 !-------------------------------------------------------------------------------
 
-URxvt.depth:                32
+!URxvt.depth:                32
+URxvt.depth:                0
 URxvt.geometry:             90x30
 URxvt.transparent:          false
 URxvt.fading:               0
@@ -29,11 +31,51 @@ URxvt.lineSpace:            0
 ! Fonts
 URxvt.allow_bold:           false
 
-URxvt.font:     xft:DejaVu Sans Mono for Powerline:style=Book:size=13:antialias=true
-URxvt.boldFont: xft:DejaVu Sans Mono for Powerline:style=BoldForPowerline:bold:size=13:antialias=true
+!#define URXVT_FONT Anonymous Pro for Powerline,Anonymice Powerline
+!#define URXVT_FONT Arimo for Powerline
+!#define URXVT_FONT Cousine for Powerline
+!#define URXVT_FONT DejaVu Sans Mono for Powerline
+!#define URXVT_FONT Droid Sans Mono Dotted for Powerline
+!#define URXVT_FONT Droid Sans Mono for Powerline
+!#define URXVT_FONT Droid Sans Mono Slashed for Powerline
+!#define URXVT_FONT Fira Mono for Powerline
+!#define URXVT_FONT Go Mono for Powerline
+!#define URXVT_FONT Liberation Mono for Powerline,Literation Mono Powerline
+!#define URXVT_FONT Meslo LG L DZ for Powerline
+!#define URXVT_FONT Meslo LG L for Powerline
+!#define URXVT_FONT Meslo LG M DZ for Powerline
+!#define URXVT_FONT Meslo LG M for Powerline
+!#define URXVT_FONT Meslo LG S DZ for Powerline
+#define URXVT_FONT Meslo LG S for Powerline
+!#define URXVT_FONT monofur for Powerline
+!#define URXVT_FONT Noto Mono for Powerline
+!#define URXVT_FONT Noto Mono for Powerline
+!#define URXVT_FONT NovaMono for Powerline
+!#define URXVT_FONT ProFont for Powerline
+!#define URXVT_FONT Roboto Mono for Powerline
+!#define URXVT_FONT Roboto Mono for Powerline
+!#define URXVT_FONT Roboto Mono Light for Powerline
+!#define URXVT_FONT Roboto Mono Medium for Powerline
+!#define URXVT_FONT Roboto Mono Thin for Powerline
+!#define URXVT_FONT Source Code Pro for Powerline
+!#define URXVT_FONT Source Code Pro for Powerline,Source Code Pro Black
+!#define URXVT_FONT Source Code Pro for Powerline,Source Code Pro ExtraLight
+!#define URXVT_FONT Source Code Pro for Powerline,Source Code Pro Light
+!#define URXVT_FONT Source Code Pro for Powerline,Source Code Pro Medium
+!#define URXVT_FONT Source Code Pro for Powerline,Source Code Pro Semibold
+!#define URXVT_FONT Space Mono for Powerline
+!#define URXVT_FONT Symbol Neu for Powerline
+!#define URXVT_FONT Tinos for Powerline
+!#define URXVT_FONT Ubuntu Mono derivative Powerline
+!#define URXVT_FONT Ubuntu Mono derivative Powerline
+
+#define URXVT_PIXELSIZE 20
+
+URxvt.font:     xft:URXVT_FONT:style=Regular:pixelsize=URXVT_PIXELSIZE:antialias=true
+URxvt.boldFont: xft:URXVT_FONT:style=Bold:pixelsize=URXVT_PIXELSIZE:antialias=true
 
 ! Fix font space
-URxvt*letterSpace: -1
+URxvt*letterSpace: 0
 
 ! Scrollbar
 URxvt.scrollStyle:          rxvt

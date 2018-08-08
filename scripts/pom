@@ -1,0 +1,20 @@
+#!/bin/bash
+
+back_to_work="Back to work"
+time_for_break="Time for a break"
+
+public_announcement() {
+  echo $@
+  notify-send "$@"
+  wall $@
+}
+
+public_announcement "Starting Pomodoro cycle"
+sleep 1500 && public_announcement $time_for_a_break
+sleep 300 && public_announcement $back_to_work
+sleep 1500 && public_announcement $time_for_a_break
+sleep 300 && public_announcement $back_to_work
+sleep 1500 && public_announcement $time_for_a_break
+sleep 300 && public_announcement $back_to_work
+sleep 1500 && public_announcement $time_for_a_break
+sleep 900 && public_announcement "Ended Pomodoro cycle"
