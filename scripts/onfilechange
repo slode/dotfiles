@@ -1,0 +1,7 @@
+#!/bin/sh
+while true; do
+  $@ &
+  PID=$!
+  inotifywait -r -e create -e modify `pwd` 
+  kill $PID
+done
