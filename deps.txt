@@ -1,4 +1,5 @@
-#less, ranger etc.
+#
+# less, ranger etc.
 install source-highlight
 
 # i3
@@ -18,3 +19,5 @@ install xfontsel
 
 #vim fast_find
 install parallel
+
+install inotify-tools
