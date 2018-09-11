@@ -37,10 +37,11 @@ set $mod Mod4
 # font pango:Cousine 13
 # font pango:Arimo 11
 # font pango:Sans 13 
-# font pango:Noto Mono Regular 13
+#font pango:Noto Mono for Powerline Regular 13
+font pango:Meslo LG S for Powerline 11
 # font pango:DroidSansMono 13
 #font pango:Noto Mono Regular 13
-font pango:DejaVu Sans Mono, Awesome 10 
+#font pango:DejaVu Sans Mono, Awesome 10 
 
 
 ###################       STOPPING A PROGRAM      ##############################
@@ -226,10 +227,11 @@ bindsym $mod+Return exec urxvt;focus
 
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec dmenu_run -fn 'DejaVuSansMono:pixelsize=18' 
+#bindsym $mod+d exec dmenu_run -fn 'DejaVuSansMono:pixelsize=18' 
+bindsym $mod+d exec rofi -show run -fn 'DejaVuSansMono:pixelsize=18' 
 
 # start alternative menu j4-dmenu based on desktop files in /usr/share/applications
-bindsym $mod+shift+d exec j4-dmenu-desktop --dmenu="dmenu -fn 'DroidSansMono:bold:pixelsize=16' -nb '#fdf6e3' -nf '#586c75' -sf '#fdf6e3' -sb '#FFAF00'"
+#bindsym $mod+shift+d exec j4-dmenu-desktop --dmenu="dmenu -fn 'DroidSansMono:bold:pixelsize=16' -nb '#fdf6e3' -nf '#586c75' -sf '#fdf6e3' -sb '#FFAF00'"
 
 # start up i3-dmenu-desktop
 #bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
@@ -243,14 +245,14 @@ bindsym $mod+shift+d exec j4-dmenu-desktop --dmenu="dmenu -fn 'DroidSansMono:bol
 # use this line to tell which monitor is on the right
 # xrandr --output DVI-I-2 --right-of DVI-I-1 --auto
 
-set $output1 "DVI-I-1" 
-set $output2 "DP-1" 
+set $output1 "Virtual1" #"DVI-I-1" 
+set $output2 "Virtual2" #DP-1" 
 
 #Name the workspaces
 set $tag1  "1: "
 set $tag2  "2: "
 set $tag3  "3: "
-set $tag4  "4: rms"
+set $tag4  "4: "
 set $tag5  "5: "
 set $tag6  "6: "
 set $tag7  "7: "
@@ -264,10 +266,10 @@ workspace $tag5 output $output1
 workspace $tag7 output $output1
 workspace $tag9 output $output1
 
-workspace $tag2 output $output2
-workspace $tag4 output $output2
-workspace $tag6 output $output2
-workspace $tag8 output $output2
+workspace $tag2  output $output2
+workspace $tag4  output $output2
+workspace $tag6  output $output2
+workspace $tag8  output $output2
 workspace $tag10 output $output2
 
 # switch to workspace
@@ -321,7 +323,9 @@ floating_modifier $mod
 ################### ASSIGN ######################
 
 
-assign [class="Firefox"]          → $tag2
+assign [class="Firefox"]           → $tag2
+assign [class="Actin Viewer"]       → $tag1
+assign [class="QtCreator"]       → $tag4
 #assign [class="sublime-text"]     → 2
 #assign [class="sublime_text"]     → 2
 #assign [class="Sublime_text"]     → 2
@@ -331,10 +335,10 @@ assign [class="Firefox"]          → $tag2
 #assign [class="Nemo"]             → 8
 #assign [class="Geary"]            → 9
 #assign [class="Evolution"]        → 9
-assign [class="Spotify"]          → $tag5
+#assign [class="Spotify"]          → $tag5
 ##fix for spotify not moving to workspace 10
-for_window [class="Spotify"] move to workspace $tag5
-assign [class="rms"] $tag4
+#for_window [class="Spotify"] move to workspace $tag5
+for_window [class="actinViewer"] move to workspace $tag1
 #
 
 ################### EXECUTE ######################
@@ -351,11 +355,13 @@ assign [class="rms"] $tag4
 
 # USER APPLICATIONS
 
+exec qtcreator
 exec firefox
 for_window [class="Firefox"] focus
+for_window [class="Actin Viewer"] focus
 #exec subl
 #exec evolution
-exec spotify
+#exec spotify
 #for_window [class="Spotify"] focus
 #exec nemo --no-desktop
 #exec ~/.config/i3/start-conkys.sh
@@ -506,44 +512,45 @@ bindsym XF86MonBrightnessDown exec "xbacklight -dec 10%"
 
 ################### BAR APPEARANCE ######################
 
-set $base03  #002b36
-set $base02  #073642
-set $base01  #586e75
-set $base00  #657b83
-set $base0   #839496
-set $base1   #93a1a1
-set $base2   #eee8d5
-set $base3   #fdf6e3
-set $yellow  #b58900
-set $orange  #cb4b16
-set $red     #dc322f
-set $magenta #d33682
-set $violet  #6c71c4
-set $blue    #268bd2
-set $cyan    #2aa198
-set $green   #859900
+set_from_resource $base03 color8 #002b36
+set_from_resource $base02 color0 #073642
+set_from_resource $base01 color10 #586e75
+set_from_resource $base00 color11 #657b83
+set_from_resource $base0 color12 #839496
+set_from_resource $base1 color14 #93a1a1
+set_from_resource $base2 color7 #eee8d5
+set_from_resource $base3 color15 #fdf6e3
+set_from_resource $yellow color3 #b58900
+set_from_resource $orange color9 #cb4b16
+set_from_resource $red color1 #dc322f
+set_from_resource $magenta color5 #d33682
+set_from_resource $violet color13 #6c71c4
+set_from_resource $blue color4 #268bd2
+set_from_resource $cyan color6 #2aa198
+set_from_resource $green color2 #859900
 
 bar {
   colors {
       background #002b36
       statusline #839496
-      separator #d33682
+      separator  #2aa198
 
-      focused_workspace  $magenta $magenta $base3
-      active_workspace   $base02  $base02  $base3
-      inactive_workspace $base02  $base02  $base3
-      urgent_workspace   $red     $red     $base3
+      focused_workspace  $magenta   $magenta $base3
+      active_workspace   $violet    $violet  $base3
+      inactive_workspace $base01    $base01  $base3
+      urgent_workspace   $yellow    $yellow   $base3
   }
   position bottom
   status_command i3status -c ~/.config/i3/i3status.conf
+  tray_output primary
 }
 
-client.focused    $magenta $magenta $base3
-client.unfocused  $base02 $base02 $base3
-client.urgent     $red $red $base3
-#client.placeholder      #242424 #242424 #242424
-#client.background       #242424 #242424 #242424
-#client.focused_inactive #222222 #222222 #a9a9a9 #222222
+# class                     border    backgr.   text      indicator child_border
+client.focused              $magenta  $magenta  $magenta  $magenta  $magenta
+client.unfocused            $base02   $base02   $base3    $base02   $base02
+client.unfocused_inactive   $base02   $base02   $base3    $base02   $base02
+client.urgent               $red      $red      $base3    $red      $red
+client.placeholder          $red      $red      $base3    $red      $red
 
 
 ###########################################################################
@@ -553,18 +560,18 @@ client.urgent     $red $red $base3
 # https://github.com/Airblader/i3
 
 for_window [class="^.*"] border pixel 3
-gaps inner 3
-gaps outer 3
-smart_gaps on
-smart_borders on
+#gaps inner 3
+#gaps outer 3
+#smart_gaps on
+#smart_borders on
 
 ###########################################################################
 ###################       I3 GAPS CHANGE     ##############################
 ###########################################################################
 
 
-set $mode_gaps Gaps: (o) outer, (i) inner
-set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
+#set $mode_gaps Gaps: (o) outer, (i) inner
+#set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
 set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
 #bindsym $mod+Shift+g mode "$mode_gaps"
 
@@ -607,6 +614,6 @@ mode "$mode_gaps_outer" {
 #if you want transparency on non-focused windows
 exec_always compton --config ~/.config/i3/compton.conf
 
-exec --no-startup-id feh --bg-scale ~/.wallpaper.png
+exec --no-startup-id feh --bg-scale ~/Pictures/wallpaper.jpg
 exec dunst -config ~/.config/i3/dunstrc
 exec --no-startup-id udiskie
