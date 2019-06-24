@@ -7,8 +7,19 @@ call plug#begin('~/.vim/plugged')
 " autocomplete - deoplete
 "Plug 'Rip-Rip/clang_complete'
 
+" SuperTab
+"Plug 'ervandew/supertab'
+
 " autocompletion (also a linter - diagnostics)
 Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer' }
+
+" UltiSnips
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+
+
+" Search for files
+Plug 'slode/vim-fast-find'
 
 " autocomplete - roxma
 "Plug 'roxma/nvim-completion-manager'
@@ -37,12 +48,9 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'octol/vim-cpp-enhanced-highlight'
 
 " ctags indexer
-Plug 'vim-scripts/DfrankUtil'
-Plug 'vim-scripts/vimprj'
-Plug 'vim-scripts/indexer.tar.gz'
-
-" UltiSnips
-Plug 'SirVer/ultisnips'
+"Plug 'vim-scripts/DfrankUtil'
+"Plug 'vim-scripts/vimprj'
+"Plug 'vim-scripts/indexer.tar.gz'
 
 " easy motion
 Plug 'easymotion/vim-easymotion'
@@ -124,7 +132,7 @@ set nofoldenable        "dont fold by default
 " Start scrolling when we're 8 lines away from margins
 set scrolloff=8
 set sidescrolloff=2
-set sidescroll=0
+set sidescroll=1
 set ruler
 
 " Don’t reset cursor to start of line when moving around.
@@ -170,7 +178,7 @@ nnoremap <leader>sv :source $MYVIMRC<CR>
 " ================ Visualization ====================
 
 syntax on
-set background=light
+set background=dark
 colorscheme solarized
 
 " enable 256bit colors - also: override gnome-terminal's settings
@@ -180,11 +188,12 @@ set t_Co=256
 " ================ Indentation ======================
 
 set autoindent
-set smartindent
-set shiftwidth=4
-set tabstop=4
+set nosmartindent
+set shiftwidth=2
+set tabstop=2
 set smarttab
 set expandtab
+filetype indent on
 
 
 " ================ Number column ====================
@@ -194,13 +203,13 @@ set number " see the line number column
 set nuw=6  "Number column width
 
 " Toggle relative numbering, and set to absolute on loss of focus or insert mode
-autocmd InsertEnter * :set nornu
-autocmd InsertLeave * :set rnu
+"autocmd InsertEnter * :set nornu
+"autocmd InsertLeave * :set rnu
 " we don't want to see relative numbering while debugging
 " debugger uses its own window, so we can disable rnu when source window loses
 " focus
-autocmd BufLeave * :set nornu
-autocmd BufEnter * call SetRNU()
+"autocmd BufLeave * :set nornu
+"autocmd BufEnter * call SetRNU()
 function! SetRNU()
     if(mode()!='i')
         set rnu
@@ -284,6 +293,7 @@ set history=1000
 " this fixes the problem
 set backspace=indent,eol,start
 
+set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 " to avoid hitting:
 " 'press ENTER or type command to continue'
 " add 'silent' keyword before the command
@@ -295,7 +305,13 @@ set backspace=indent,eol,start
 set completeopt-=preview
 
 
+" ================ Term ==========================
+
+command! -nargs=* R set splitright | vs | vertical resize 50 | term <args>
+
 " ================ Plugins ==========================
+
+noremap <leader>uu :%s/[-[:xdigit:]]\{36}/\=substitute(system('uuidgen'), "\n", "", "")/<CR>
 
 " ################ Airline ##########################
 " air-line
@@ -334,24 +350,13 @@ let g:airline_symbols.linenr = ''
 " shift+i (show hidden files)
 
 " ctrl+n open/closes nerd tree
-noremap <C-n> :NERDTreeToggle<CR>
+noremap <C-e> :NERDTreeToggle<CR>
 
 " quit nerd tree on file open
 let g:NERDTreeQuitOnOpen = 1
 
 " show nerd tree always on the right instead on the left
 "let g:NERDTreeWinPos = "right"
-
-" ################ UltiSnips ########################
-
-" make a dir Ultisnips in: '~/.config/nvim/UltiSnips/'
-" and put your snippets in there
-" eg. cpp.snippets
-
-let g:UltiSnipsExpandTrigger = "<tab>"
-let g:UltiSnipsJumpForwardTrigger = "<tab>"
-let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-let g:UltiSnipsUsePythonVersion = 3
 
 
 " ################ Clang complete ###################
@@ -374,9 +379,9 @@ let g:UltiSnipsUsePythonVersion = 3
 
 let g:ycm_show_diagnostics_ui = 0
 
-let g:ycm_key_list_select_completion = ['<C-k>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-l>', '<Up>']
-let g:SuperTabDefaulCompletionType = '<C-k>'
+"let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
+"let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
+let g:SuperTabDefaulCompletionType = '<tab>'
 
 " disable annoying ycm confirmation
 let g:ycm_confirm_extra_conf = 0
@@ -386,6 +391,16 @@ let g:ycm_confirm_extra_conf = 0
 " not work properly
 let g:ycm_global_ycm_extra_conf = '/home/stian/.vim/plugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
 
+" ################ UltiSnips ########################
+
+" make a dir Ultisnips in: '~/.config/nvim/UltiSnips/'
+" and put your snippets in there
+" eg. cpp.snippets
+
+let g:UltiSnipsExpandTrigger="<c-space>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+let g:UltiSnipsUsePythonVersion = 3
 
 " ################ Ale ##############################
 
@@ -455,7 +470,7 @@ map <leader><leader>l <Plug>(easymotion-lineforward)
 nnoremap <C-e> <C-]>
 
 " CTAGS indexer
-let g:indexer_disableCtagsWarning = 1
+"let g:indexer_disableCtagsWarning = 1
 
 
 " TODO: add (cmake) project support
