@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "scale=5;$@" | bc

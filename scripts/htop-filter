@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+PID=$1
+htop -p `pstree -p $PID | perl -ne 'push @t, /\((\d+)\)/g; END { print join ",", @t }'`
