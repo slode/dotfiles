@@ -19,8 +19,8 @@ alias cp="cp -vi"
 alias h="history | grep -i"
 alias xx="exit"
 
-alias vim="nvim"
 export EDITOR=nvim
+alias vim="$EDITOR"
 
 fe() {
   find . -iname "*$@"

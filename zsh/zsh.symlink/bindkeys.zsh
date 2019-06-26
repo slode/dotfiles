@@ -1,26 +1,13 @@
-autoload zkbd
-function zkbd_file() {
-    [[ -f ~/.zkbd/${TERM}-${VENDOR}-${OSTYPE} ]] && printf '%s' ~/".zkbd/${TERM}-${VENDOR}-${OSTYPE}" && return 0
-    [[ -f ~/.zkbd/${TERM}-${DISPLAY}          ]] && printf '%s' ~/".zkbd/${TERM}-${DISPLAY}"          && return 0
-    return 1
-}
+zmodload zsh/terminfo
 
-[[ ! -d ~/.zkbd ]] && mkdir ~/.zkbd
-keyfile=$(zkbd_file)
-ret=$?
-if [[ ${ret} -ne 0 ]]; then
-    zkbd
-    keyfile=$(zkbd_file)
-    ret=$?
-fi
-if [[ ${ret} -eq 0 ]] ; then
-    source "${keyfile}"
+typeset -gA keys
+
+if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
+  source ~/.zsh/terminfo.zsh.inc
 else
-    printf 'Failed to setup keys using zkbd.\n'
+  source ~/.zsh/zkbd.zsh.inc
 fi
-unfunction zkbd_file; unset keyfile ret
 
-# setup key accordingly
 [[ -n "${key[Home]}"     ]]  && bindkey  "${key[Home]}"     beginning-of-line
 [[ -n "${key[End]}"      ]]  && bindkey  "${key[End]}"      end-of-line
 [[ -n "${key[Insert]}"   ]]  && bindkey  "${key[Insert]}"   overwrite-mode
@@ -32,3 +19,15 @@ unfunction zkbd_file; unset keyfile ret
 [[ -n "${key[PageUp]}"   ]]  && bindkey  "${key[PageUp]}"   history-beginning-search-backward
 [[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}" history-beginning-search-forward
 [[ -n "${key[Backspace]}" ]]  && bindkey  "${key[Backspace]}" backward-delete-char
+
+[[ -n "${key[CtrlLeft]}"         ]]  && bindkey  "${key[CtrlLeft]}"        backward-word
+[[ -n "${key[CtrlRight]}"        ]]  && bindkey  "${key[CtrlRight]}"       forward-word
+[[ -n "${key[CtrlBackspace]}"    ]]  && bindkey  "${key[CtrlBackspace]}"   backward-delete-word
+
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+[[ -n "$key[CtrlUp]"   ]] && bindkey "$key[CtrlUp]"   up-line-or-beginning-search
+[[ -n "$key[CtrlDown]" ]] && bindkey "$key[CtrlDown]" down-line-or-beginning-search
+
