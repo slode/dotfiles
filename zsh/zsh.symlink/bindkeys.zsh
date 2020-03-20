@@ -31,3 +31,4 @@ zle -N down-line-or-beginning-search
 [[ -n "$key[CtrlUp]"   ]] && bindkey "$key[CtrlUp]"   up-line-or-beginning-search
 [[ -n "$key[CtrlDown]" ]] && bindkey "$key[CtrlDown]" down-line-or-beginning-search
 
+bindkey '^R' history-incremental-pattern-search-backward
