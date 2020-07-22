@@ -1,0 +1,11 @@
+#!python3
+import fileinput
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--delimiter", default=" ", help="optional delimiter between fields")
+args = parser.parse_args()
+
+with fileinput.input() as inp:
+    for line in inp:
+        print(args.delimiter.join(sorted(line.strip().split(args.delimiter))))
