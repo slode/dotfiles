@@ -15,12 +15,17 @@ for number in sys.stdin:
     count += 1
     max_num = max(max_num, n)
     min_num = min(min_num, n)
+
+if count <= 0:
+    print("No numbers recognized")
+    exit(-1)
+
 try: 
     variance = (sum_squares - (sum_num**2 / count)) / (count - 1.0)
     stddev = math.sqrt(variance)
 except:
     stddev = float('nan')
 
-print("numbers: {:.0f}, sum: {:.2f}, min: {:.2f}, max: {:.2f}, stddev: {:.2f}".format(count, sum_num, min_num, max_num, stddev))
+print("numbers: {:.0f}, sum: {:.2f}, avg: {:.2f}, min: {:.2f}, max: {:.2f}, stddev: {:.2f}".format(count, sum_num, sum_num / count, min_num, max_num, stddev))
 
   
