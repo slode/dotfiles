@@ -27,20 +27,20 @@ set $mod Mod4
 # font pango:DejaVu Sans Mono, Terminus Bold Semi-Condensed 11
 # font pango:Droid Sans Mono Dotted 12
 # font pango:hermit 12
-# font pango:Inconsolata 15
+# font pango:Inconsolata 10
 # font pango:monospace 12
 # font pango:SourceCodePro-SemiBold 11
-# font pango:Source Code Pro for Powerline, FontAwesome Regular, Icons 9
+font pango:Source Code Pro for Powerline, FontAwesome Regular, Icons 11
 # font pango:Terminus 14px
 # font pango:UbuntuMono-regular 12
 # from ttf-chromeos-fonts
 # font pango:Cousine 13
 # font pango:Arimo 11
 # font pango:Sans 13 
-#font pango:Noto Mono for Powerline Regular 13
-font pango:Meslo LG S for Powerline 11
+# font pango:Noto Mono for Powerline Regular 13
+# font pango:Meslo LG S for Powerline 11
 # font pango:DroidSansMono 13
-#font pango:Noto Mono Regular 13
+# font pango:Noto Mono Regular 11
 #font pango:DejaVu Sans Mono, Awesome 10 
 
 
@@ -52,11 +52,8 @@ bindsym $mod+Shift+q kill
 
 ################### MOVING AROUND ##############################
 
-
-
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
-
 
 # use these keys for focus, movement, and resize directions when reaching for
 # the arrows is not convenient
@@ -218,9 +215,9 @@ bindsym $mod+r mode "resize"
 
 
 # personal preference for tuning the look
-#bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec i3-sensible-terminal
 #bindsym $mod+Return exec terminator;focus
-bindsym $mod+Return exec urxvt;focus
+#bindsym $mod+Return exec urxvt;focus
 
 
 ################### MENU ######################
@@ -245,8 +242,8 @@ bindsym $mod+d exec rofi -show run -fn 'DejaVuSansMono:pixelsize=18'
 # use this line to tell which monitor is on the right
 # xrandr --output DVI-I-2 --right-of DVI-I-1 --auto
 
-set $output1 "Virtual1" #"DVI-I-1" 
-set $output2 "Virtual2" #DP-1" 
+set $output1 "DP-2" #"Virtual1" #"DVI-I-1" 
+set $output2 "DP-0" #"Virtual2" #DP-1" 
 
 #Name the workspaces
 set $tag1  "1: "
@@ -324,8 +321,10 @@ floating_modifier $mod
 
 
 assign [class="Firefox"]           → $tag2
-assign [class="Actin Viewer"]      → $tag4
-assign [class="QtCreator"]         → $tag1
+assign [class="Google-chrome"]     → $tag2
+assign [class="Slack"]             → $tag1
+#assign [class="Actin Viewer"]      → $tag4
+#assign [class="QtCreator"]         → $tag1
 #assign [class="sublime-text"]     → 2
 #assign [class="sublime_text"]     → 2
 #assign [class="Sublime_text"]     → 2
@@ -355,10 +354,10 @@ for_window [class="actinViewer"] move to workspace $tag4
 
 # USER APPLICATIONS
 
-exec qtcreator
-exec firefox
-for_window [class="Firefox"] focus
-for_window [class="Actin Viewer"] focus
+exec slack
+exec google-chrome
+for_window [class="Google-chrome"] focus
+#for_window [class="Actin Viewer"] focus
 #exec subl
 #exec evolution
 #exec spotify
@@ -393,7 +392,7 @@ exec dunst -config ~/.config/i3/dunstrc
 ################### SCREENSHOTS ######################
 
 
-bindsym Print exec scrot '%Y-%m-%d-%s_screenshot_$wx$h.jpg' -e 'mv $f ~/Pictures/'
+bindsym Print exec scrot '%Y-%m-%d-%s_screenshot_$wx$h.jpg' -d2 -s -e 'mv $f ~/Pictures/'
 bindsym Control+Print exec gnome-screenshot -i
 
 ################### FLOATING OR TILED ######################
@@ -463,6 +462,10 @@ mode "$mode_system" {
 
 
 ################### AUDIO ######################
+
+bindsym control+$mod+Up exec "amixer -D pulse sset Master '5%+'"
+bindsym control+$mod+Down exec "amixer -D pulse sset Master '5%-'"
+bindsym control+$mod+m exec "amixer -D pulse set Master toggle"
 
 bindsym XF86AudioRaiseVolume exec "amixer -D pulse sset Master '5%+'"
 bindsym XF86AudioLowerVolume exec "amixer -D pulse sset Master '5%-'"
@@ -560,7 +563,7 @@ client.placeholder          $red      $red      $base3    $red      $red
 # Settings for I3 next gap git
 # https://github.com/Airblader/i3
 
-for_window [class="^.*"] border pixel 3
+for_window [class="^.*"] border pixel 1
 #gaps inner 3
 #gaps outer 3
 #smart_gaps on
@@ -613,9 +616,10 @@ mode "$mode_gaps_outer" {
 ###################       C O M P T O N      ##############################
 ###########################################################################
 #if you want transparency on non-focused windows
-exec_always compton --config ~/.config/i3/compton.conf
+#exec_always compton --config ~/.config/i3/compton.conf
 
-exec --no-startup-id feh --bg-scale ~/Pictures/wallpaper.jpg
+exec --no-startup-id feh --bg-scale ~/Pictures/wallpaper.png
 exec dunst -config ~/.config/i3/dunstrc
 exec --no-startup-id udiskie
-exec --no-startup-id vmware-user
+exec --no-startup-id redshift
+#exec --no-startup-id vmware-user

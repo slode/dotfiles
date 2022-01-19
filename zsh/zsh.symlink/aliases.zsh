@@ -21,7 +21,6 @@ alias xx="exit"
 
 export EDITOR=nvim
 alias vim="$EDITOR"
-alias vec="vim $(git status --porcelain | awk '{print $2}')"
 
 fe() {
   find . -iname "*$@"
@@ -50,7 +49,8 @@ all-git() {
 }
 
 svp() {
-  for s in $SVDIR/$2*; do
+  setopt null_glob
+  for s in $SVDIR/($2|*.$2)*/; do
     echo "${fg[yellow]}>>> sv ${1} ${s}${reset_color}"
     outp=$(sv $1 $s)
     if [ $? -ne 0 ]; then

@@ -1,5 +1,6 @@
 [global]
-font = DejaVu Sans Mono Book 15
+#font = DejaVu Sans Mono Book 13
+font = Source Code Pro for Powerline 12
 
 # Allow a small subset of html markup:
 #   <b>bold</b>
@@ -64,7 +65,7 @@ ignore_newline = no
 # the top and down respectevly.
 # The width can be negative.  In this case the actual width is the
 # screen width minus the width defined in within the geometry option.
-geometry = "300x5-30+20"
+geometry = "600x6-30+20"
 
 # Shrink window if it's smaller than the width.  Will be ignored if
 # width is 0.
@@ -175,19 +176,19 @@ context = ctrl+shift+period
 [urgency_low]
 # IMPORTANT: colors have to be defined in quotation marks.
 # Otherwise the "#" and following would be interpreted as a comment.
-background = "#859900"
+background = "#BBBBAA"
 foreground = "#fdf6e3"
-timeout = 3
+timeout = 8
 
 [urgency_normal]
-background = "#859900"
+background = "#88AA00"
 foreground = "#fdf6e3"
-timeout = 3
+timeout = 8
 
 [urgency_critical]
-background = "#dc323f"
+background = "#dc325f"
 foreground = "#fdf6e3"
-timeout = 10
+timeout = 15
 
 
 # Every section that isn't one of the above is interpreted as a rules to
