@@ -1,0 +1,27 @@
+markerline_color:green,black,reverse
+colorscheme:runit
+cs_re:green:"[^"]*"
+cs_re:green:'[^']*'
+cs_re:blue:^....-..-.._..:..:..\......
+cs_re_s:blue,,bold:^[^ ]* *[^,]*,[^ ]* *[0-9]* *(DEBUG) *[^ ]* [^ ]* *(.*)$
+cs_re_s:green:(INFO)
+cs_re_s:yellow:(WARN|WARNING)
+cs_re_s:red:(ERROR)
+cs_re:red,,bold:.*(FATAL).*
+
+cs_re:magenta:\{
+cs_re:magenta:\}
+cs_re:magenta:\[
+cs_re:magenta:\]
+cs_re:magenta:/
+cs_re:magenta::
+
+defaultcscheme:runit
+filterscheme:runit
+usefilterscheme:runit:.*
+
+editscheme:runit: removes redundant dates
+editrule:ke: ....-..-.. ..:..:..,...
+editrule:ke: \[....-..-.. ..:..:.. .....\]
+editrule:ke: ....-..-.. ..:..:......
+useeditscheme:runit:.*
