@@ -77,4 +77,20 @@ mult() {
   multitail -s 3 -M 10000 -N 10000 --follow-all --retry-all -CS runit $(echo $LOGFILES)
 }
 
+work_activity() {
+  local IFS=' '
+  for i in {0..${1:-10}}
+  do
+    dt=$(date +%Y-%m-%d --date="today - $i day")
+    args=$(history -i 0 | grep "$dt" | awk 'NR==1 {ORS=" ";print $3}; END{ORS="";print $3}')
+    if [ "$args" == "" ]
+    then
+      echo "$dt [...]"
+    else
+      var1=${args% *}
+      var2=${args#* }
+      echo "$dt [$var1, $var2] $(dtrange $var1 $var2)"
+    fi
 
+  done
+}

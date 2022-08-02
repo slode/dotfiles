@@ -101,11 +101,11 @@ for_window [urgent=latest] focus
 ###################       SCRATCHPAD      ##############################
 
 # move the currently focused window to the scratchpad
-# bindsym Mod1+Shift+minus move scratchpad
+bindsym $mod+Shift+minus move scratchpad
 
 # Show the next scratchpad window or hide the focused scratchpad window.
 # If there are multiple scratchpad windows, this command cycles through them.
-# bindsym Mod1+minus scratchpad show
+bindsym $mod+minus scratchpad show
 
 
 ################### TILING PARAMETERS ##############################
@@ -323,6 +323,7 @@ floating_modifier $mod
 assign [class="Firefox"]           → $tag2
 assign [class="Google-chrome"]     → $tag2
 assign [class="Slack"]             → $tag1
+assign [class="pgadmin4"]          → $tag5
 #assign [class="Actin Viewer"]      → $tag4
 #assign [class="QtCreator"]         → $tag1
 #assign [class="sublime-text"]     → 2
@@ -356,6 +357,7 @@ for_window [class="actinViewer"] move to workspace $tag4
 
 exec slack
 exec google-chrome
+exec pgadmin4
 for_window [class="Google-chrome"] focus
 #for_window [class="Actin Viewer"] focus
 #exec subl
@@ -436,6 +438,7 @@ for_window [class="Usb-creator-gtk"] floating enable
 for_window [class="MintUpdate.py"] floating enable
 #for_window [class="Bleachbit"] floating enable
 for_window [class="Hexchat"] floating disable
+for_window [class="pgadmin4"] floating disable
 
 #Popups during fullscreen mode
 popup_during_fullscreen smart

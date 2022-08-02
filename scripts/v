@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Starts vim with several possible input formats.
@@ -11,44 +11,66 @@ Examples:
 
 import os
 import sys
+import re
+import argparse
+import tempfile
+
+
+regex_matchers = [
+        re.compile('(?P<file>(\.\/|\/|~\/|\w+/)[\w~\.\/]+[^:[\(\s\n]+)+([^\d])*(?P<lno>\d+)?'),
+        re.compile('File "(?P<file>[^"]+)", line (?P<lno>\d+)?')
+        ]
 
 def find_first(name, path):
-  """Find first file on path."""
-  for root, dirs, files in os.walk(path):
-    if name in files:
-      return os.path.join(root, name)
+    """Find first file on path."""
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
+
+def read_stdin():
+    """Write to tmp-file from stdin and return filename"""
+    fd, fname = tempfile.mkstemp()
+    with os.fdopen(fd, "w") as f:
+        for line in sys.stdin:
+            f.write(line)
+    return fname
 
 if __name__ == "__main__":
-  args = sys.argv[1:]
+    parser = argparse.ArgumentParser("Vim file search")
+    parser.add_argument(
+            "-s", "--stdin",
+            help="Read from stdin",
+            action="store_true",
+            default=False)
+    parser.add_argument(
+            "pattern",
+            help="file-like path, optionally with line number\n"
+            "-- to read from stdin",
+            nargs="*",
+            default=None)
 
-  if len(args) == 0:
-    print("No arguments.")
-    sys.exit(1)
+    args = parser.parse_args()
 
-  filename = args[0]
-  line = ""
+    spec = {}
+    if args.stdin:
+        spec["file"] = read_stdin()
 
-  if len(args) > 1:
-    line = args[1]
+    elif args.pattern is not None:
+        spec["file"] = " ".join(args.pattern)
+        for rex in regex_matchers:
+            match = rex.search(" ".join(args.pattern))
+            if match is None:
+                continue
 
-  if ":" in filename:
-    v = filename.split(":")
-    filename = v[0]
-    if v[1] == "+":
-      line = v[1]
-    else:
-      line = "+" + v[1]
+            spec.update({k: v for k, v in match.groupdict().items() if v is not None})
 
+        if not os.path.exists(spec["file"]):
+            spec["file"] = find_first(spec["file"], ".") or spec["file"]
 
-  # Find file if not found
-  if not os.path.exists(filename):
-    filename = find_first(filename, ".")
+    cmd = "vim"
 
-  # Still not found? Don't do it.
-  if filename is None or not os.path.exists(filename):
-    print("Could not find: %s" % " ".join(sys.argv[1:]))
-    sys.exit(1)
+    if "file" in spec:
+        cmd += " +" + str(spec.get("lno", "0"))
+        cmd += " " + spec.get("file", "")
 
-  cmd = "%s %s %s" % ("vim", filename, line)
-  print(cmd)
-  os.system(cmd)
+    os.system(cmd)

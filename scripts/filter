@@ -1,0 +1,15 @@
+#!bash
+set -euo pipefail
+
+if [ -p /dev/stdin ]; then
+  if [ -x `which parallel` ]; then
+    xargs_cmd="parallel -j150% -n 1000 --gnu "
+  else
+    xargs_cmd="xargs "
+  fi
+  grep_cmd="grep -nHil -d skip -D skip -I -m1 '$1'"
+
+  cat /dev/stdin | $xargs_cmd $grep_cmd
+fi
+
+
