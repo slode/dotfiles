@@ -226,6 +226,7 @@ bindsym $mod+Return exec i3-sensible-terminal
 # start dmenu (a program launcher)
 #bindsym $mod+d exec dmenu_run -fn 'DejaVuSansMono:pixelsize=18' 
 bindsym $mod+d exec rofi -show run -fn 'DejaVuSansMono:pixelsize=18' 
+bindsym $mod+g exec rofi -show window -fn 'DejaVuSansMono:pixelsize=18' 
 
 # start alternative menu j4-dmenu based on desktop files in /usr/share/applications
 #bindsym $mod+shift+d exec j4-dmenu-desktop --dmenu="dmenu -fn 'DroidSansMono:bold:pixelsize=16' -nb '#fdf6e3' -nf '#586c75' -sf '#fdf6e3' -sb '#FFAF00'"
@@ -323,7 +324,7 @@ floating_modifier $mod
 assign [class="Firefox"]           → $tag2
 assign [class="Google-chrome"]     → $tag2
 assign [class="Slack"]             → $tag1
-assign [class="pgadmin4"]          → $tag5
+assign [class="datagrip"]          → $tag5
 #assign [class="Actin Viewer"]      → $tag4
 #assign [class="QtCreator"]         → $tag1
 #assign [class="sublime-text"]     → 2
@@ -357,7 +358,7 @@ for_window [class="actinViewer"] move to workspace $tag4
 
 exec slack
 exec google-chrome
-exec pgadmin4
+exec datagrip.sh
 for_window [class="Google-chrome"] focus
 #for_window [class="Actin Viewer"] focus
 #exec subl

@@ -2,40 +2,21 @@
 
 call plug#begin('~/.vim/plugged')
 
-" Make sure you use single quotes ''
+" Python completion
+"let g:python3_host_prog = '/usr/bin/python3'
 
-" autocomplete - deoplete
-"Plug 'Rip-Rip/clang_complete'
-
-" SuperTab
-"Plug 'ervandew/supertab'
-
-" autocompletion (also a linter - diagnostics)
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --clang-completer' }
-
-" UltiSnips
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-
+" Vim Script
+Plug 'williamboman/nvim-lsp-installer'
+Plug 'neovim/nvim-lspconfig'
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'folke/trouble.nvim'
 
 " Search for files
 Plug 'slode/vim-fast-find'
-
-" autocomplete - roxma
-"Plug 'roxma/nvim-completion-manager'
-"Plug 'roxma/ncm-clang'
-
-" ale - linter / autocompletion / formatter
-Plug 'w0rp/ale'
-
-" auto formatter
-Plug 'rhysd/vim-clang-format'
-
-" nerd tree
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'slode/nvim-pdb'
 
 " surround vim
-Plug 'tpope/vim-surround'
+"Plug 'tpope/vim-surround'
 
 " nerd commenter
 Plug 'scrooloose/nerdcommenter'
@@ -47,17 +28,6 @@ Plug 'vim-airline/vim-airline-themes'
 " enhanced highlight
 Plug 'octol/vim-cpp-enhanced-highlight'
 
-" ctags indexer
-"Plug 'vim-scripts/DfrankUtil'
-"Plug 'vim-scripts/vimprj'
-"Plug 'vim-scripts/indexer.tar.gz'
-
-" easy motion
-Plug 'easymotion/vim-easymotion'
-
-" A - for switching between source and header files
-Plug 'vim-scripts/a.vim'
-
 " colorscheme
 "Plug 'wombat256mod.vim'
 Plug 'nanotech/jellybeans.vim'
@@ -67,6 +37,9 @@ Plug 'w0ng/vim-hybrid'
 Plug 'tpope/vim-vividchalk'
 Plug 'lokaltog/vim-distinguished'
 Plug 'altercation/vim-colors-solarized'
+
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter-context'
 
 " auto-close (for parenthesis)
 " TODO: broken, since clang_complete
@@ -84,6 +57,66 @@ Plug 'altercation/vim-colors-solarized'
 
 call plug#end()
 
+lua << EOF
+  require'treesitter-context'.setup{}
+EOF
+
+" pip install pyright "python-lsp-server[all]"
+lua << EOF
+
+  local opts = { noremap=true, silent=true }
+  vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+  vim.keymap.set('n', '<leader>p', vim.diagnostic.goto_prev, opts)
+  vim.keymap.set('n', '<leader>n', vim.diagnostic.goto_next, opts)
+  vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+
+  -- Use an on_attach function to only map the following keys
+  -- after the language server attaches to the current buffer
+  local on_attach = function(client, bufnr)
+    -- Enable completion triggered by <c-x><c-o>
+    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+    -- Mappings.
+
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    local bufopts = { noremap=true, silent=true, buffer=bufnr }
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+    --vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+    vim.keymap.set('n', '<leader>k', vim.lsp.buf.hover, bufopts)
+    --vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+    vim.keymap.set('n', '<leader>K', vim.lsp.buf.signature_help, bufopts)
+    --vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
+    --vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
+    --vim.keymap.set('n', '<leader>wl', function()
+    --  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    --end, bufopts)
+    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
+  end
+
+  local lsp_flags = {
+    -- This is the default in Nvim 0.7+
+    debounce_text_changes = 150,
+  }
+
+  require('lspconfig')['pyright'].setup{
+      on_attach = on_attach,
+      flags = lsp_flags,
+  }
+
+  require("nvim-lsp-installer").setup {
+    automatic_installation = true
+  }
+
+  require("trouble").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+EOF
 
 " ================ Suggestions ======================
 
@@ -153,14 +186,6 @@ endif
 " set the leader key to comma
 let mapleader = ','
 
-" x clipboard
-" copy
-noremap <leader>y "*y
-" cut
-noremap <leader>d "*d
-" paste
-noremap <leader>p "*p
-
 " stay in normal mode after inserting a new line
 "noremap o o <Bs><Esc>
 "noremap O O <Bs><Esc>
@@ -174,6 +199,14 @@ nnoremap <leader>sv :source $MYVIMRC<CR>
 "noremap U <c-r>
 "noremap <c-r> <NOP>
 
+" ################ LSP/TROUBLE ######################
+
+nnoremap <leader>x <cmd>TroubleToggle<cr>
+nnoremap <leader>w <cmd>TroubleToggle workspace_diagnostics<cr>
+nnoremap <leader>d <cmd>TroubleToggle document_diagnostics<cr>
+nnoremap <leader>q <cmd>TroubleToggle quickfix<cr>
+nnoremap <leader>l <cmd>TroubleToggle loclist<cr>
+nnoremap gR <cmd>TroubleToggle lsp_references<cr>
 
 " ================ Visualization ====================
 
@@ -194,7 +227,6 @@ set tabstop=2
 set smarttab
 set expandtab
 filetype indent on
-
 
 " ================ Number column ====================
 
@@ -256,6 +288,36 @@ iab hieght height
 iab tihs this
 iab mian main
 
+" ============ File explorer  =======================
+
+" omit banner
+let g:netrw_banner = 0
+" tree-style view
+let g:netrw_liststyle = 3
+" open files in old window
+let g:netrw_browse_split = 0
+" open in split
+let g:netrw_altv=1
+
+let g:NetrwIsOpen=0
+function! ToggleNetrw()
+    if g:NetrwIsOpen
+        let i = bufnr("$")
+        while (i >= 1)
+            if (getbufvar(i, "&filetype") == "netrw")
+                silent exe "bwipeout " . i 
+            endif
+            let i-=1
+        endwhile
+        let g:NetrwIsOpen=0
+    else
+        let g:NetrwIsOpen=1
+        silent sp .
+    endif
+endfunction
+
+noremap <silent> <Leader>e : call ToggleNetrw()<cr>
+
 " ================ Misc =============================
 
 set mouse=a
@@ -298,20 +360,30 @@ set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 " 'press ENTER or type command to continue'
 " add 'silent' keyword before the command
 "
-" open a gnome-terminal with a shortcut
-"noremap <leader><CR> :silent !gnome-terminal<CR>
 
 "disable preview window
 set completeopt-=preview
 
-
 " ================ Term ==========================
 
+"set termguicolors
+
 command! -nargs=* R set splitright | vs | vertical resize 50 | term <args>
+command! -nargs=* L vs | vertical resize 50 | term <args>
 
 " ================ Plugins ==========================
-
-noremap <leader>uu :%s/[-[:xdigit:]]\{36}/\=substitute(system('uuidgen'), "\n", "", "")/<CR>
+" split window
+noremap <silent> <Leader>ef :vsplit<bar>wincmd l<bar>exe "norm! Ljz<c-v><cr>"<cr>:set scb<cr>:wincmd h<cr> :set scb<cr>
+" asterix-search with quickfix window
+noremap <leader>* :cexpr []<CR> :%g/\<<C-r><C-w>\>/caddexpr expand("%") . ":" . line(".") . ":" . getline(".")<CR>:cw<CR>
+" makes asterix-search not skip to the next match
+nnoremap <silent> * :let @/= '\<' . expand('<cword>') . '\>' <bar> set hls <cr>
+" makes g-asterix-search (partial) not skip to the next match
+nnoremap <silent> g* :let @/=expand('<cword>') <bar> set hls <cr>
+" strips trailing whitespace
+noremap <silent> <leader>fs :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+" formats json
+noremap <silent> <leader>fj :%!json_pp . <cr>
 
 " ################ Airline ##########################
 " air-line
@@ -345,134 +417,98 @@ let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
 
-" ################ NERDTree #########################
-
-" shift+i (show hidden files)
-
-" ctrl+n open/closes nerd tree
-noremap <C-e> :NERDTreeToggle<CR>
-
-" quit nerd tree on file open
-let g:NERDTreeQuitOnOpen = 1
-
-" show nerd tree always on the right instead on the left
-"let g:NERDTreeWinPos = "right"
-
-
-" ################ Clang complete ###################
-
-"let g:clang_use_library = 1
-"let g:clang_library_path='/usr/lib/llvm-5.0/lib/libclang.so.1'
-"let g:clang_periodic_quickfix=1
-"let g:clang_auto_select = 1
-
-"let g:clang_snippets = 1
-"let g:clang_snippets_engine = 'ultisnips'
-
-" I don't know how to change the keybindings to navigate
-" the 'completion suggestions menu' with ctrl+k and ctrl+l
-"inoremap <C-k> <Down>
-"inoremap <C-l> <Up>
-
-
-" ################ YouCompleteMe ####################
-
-let g:ycm_show_diagnostics_ui = 0
-
-"let g:ycm_key_list_select_completion = ['<c-n>', '<Down>']
-"let g:ycm_key_list_previous_completion = ['<c-p>', '<Up>']
-let g:SuperTabDefaulCompletionType = '<tab>'
-
-" disable annoying ycm confirmation
-let g:ycm_confirm_extra_conf = 0
-
-" add path to ycm_extra_conf.py (you could also copy the file in the home folder)
-" delete '...98' argument from .ycm_extra_conf.py, otherwise syntastic does
-" not work properly
-let g:ycm_global_ycm_extra_conf = '/home/stian/.vim/plugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
-
-" ################ UltiSnips ########################
-
-" make a dir Ultisnips in: '~/.config/nvim/UltiSnips/'
-" and put your snippets in there
-" eg. cpp.snippets
-
-let g:UltiSnipsExpandTrigger="<c-space>"
-let g:UltiSnipsJumpForwardTrigger = "<tab>"
-let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-let g:UltiSnipsUsePythonVersion = 3
-
-" ################ Ale ##############################
-
-" autocompletion
-let g:ale_completion_enabled = 1
-
-let g:ale_cpp_clang_executable = 'clang++-5.0'
-
-" linter
- let g:ale_linters = {
-            \   'cpp': ['clang']
-            \}
-let g:ale_cpp_clang_options = '-std=c++1z -O0 -Wextra -Wall -Wpedantic -I /usr/include/eigen3'
-"let g:ale_cpp_clangtidy_options = '-checks="cppcoreguidelines-*"'
-"let g:ale_cpp_cpplint_options = ''
-"let g:ale_cpp_gcc_options = ''
-"let g:ale_cpp_clangcheck_options = ''
-"let g:ale_cpp_cppcheck_options = ''
-
-
-" ################ Clang format #####################
-
-" Clang format - auto formatting
-
-let g:clang_format#command = 'clang-format-3.8'
-let g:clang_format#style_options = {
-            \ "BreakBeforeBraces" : "Attach",
-            \ "UseTab" : "Never",
-            \ "IndentWidth" : 4,
-            \ "ColumnLimit" : 100,
-            \ "AccessModifierOffset" : -4,
-            \ "AllowShortIfStatementsOnASingleLine" : "false",
-            \ "AllowShortFunctionsOnASingleLine" : "false",
-            \}
-
-" shortcuts for autoformatting the entire file: Ctrl+j
-inoremap <C-j> <Esc>:ClangFormat<CR>a
-nnoremap <C-j> <Esc>:ClangFormat<CR>
-
-
 " ################ A ################################
 
-" A - switching between files
+ "A - switching between files
 
-" header / source
-nnoremap <F4> :A<CR>
-inoremap <F4> <ESC>:A<CR>a
+ "header / source
+"nnoremap <F4> :A<CR>
+"inoremap <F4> <ESC>:A<CR>a
 
-" file under cursor
-nnoremap <F2> :IH<CR>
-inoremap <F2> <ESC>:IH<CR>
-
-
-" ################ Easymotion #######################
-
-map <leader><leader>h <Plug>(easymotion-linebackward)
-map <leader><leader>j <Plug>(easymotion-j)
-map <leader><leader>k <Plug>(easymotion-k)
-map <leader><leader>l <Plug>(easymotion-lineforward)
+ "file under cursor
+"nnoremap <F2> :IH<CR>
+"inoremap <F2> <ESC>:IH<CR>
 
 
-" ################ CTAGS ############################
 
-" TODO: learn more about this plugin and improve it
+" ############### MONKEY TERMINAL ###################
+" With this function you can reuse the same terminal in neovim.
+" You can toggle the terminal and also send a command to the same terminal.
 
-" change the stack pop to a more comfortable mapping
-nnoremap <C-e> <C-]>
+let s:monkey_terminal_window = -1
+let s:monkey_terminal_buffer = -1
+let s:monkey_terminal_job_id = -1
+let s:monkey_terminal_window_size = -1
 
-" CTAGS indexer
-"let g:indexer_disableCtagsWarning = 1
+function! MonkeyTerminalOpen()
+  " Check if buffer exists, if not create a window and a buffer
+  if !bufexists(s:monkey_terminal_buffer)
+    " Creates a window call monkey_terminal
+    new monkey_terminal
+    " Moves the window to the bottom
+    wincmd J
+    resize 15
+    let s:monkey_terminal_job_id = termopen($SHELL, { 'detach': 1 })
 
+     " Change the name of the buffer to "Terminal 1"
+     silent file Terminal\ 1
+     " Gets the id of the terminal window
+     let s:monkey_terminal_window = win_getid()
+     let s:monkey_terminal_buffer = bufnr('%')
 
-" TODO: add (cmake) project support
-" TODO: add debugger support
+    " The buffer of the terminal won't appear in the list of the buffers
+    " when calling :buffers command
+    set nobuflisted
+    set modifiable
+  else
+    if !win_gotoid(s:monkey_terminal_window)
+    sp
+    " Moves to the window below the current one
+    wincmd J   
+    execute "resize " . s:monkey_terminal_window_size 
+    buffer Terminal\ 1
+     " Gets the id of the terminal window
+     let s:monkey_terminal_window = win_getid()
+    endif
+  endif
+endfunction
 
+function! MonkeyTerminalToggle()
+  if win_gotoid(s:monkey_terminal_window)
+    call MonkeyTerminalClose()
+  else
+    call MonkeyTerminalOpen()
+  endif
+endfunction
+
+function! MonkeyTerminalClose()
+  if win_gotoid(s:monkey_terminal_window)
+    let s:monkey_terminal_window_size = winheight(s:monkey_terminal_window) 
+    " close the current window
+    hide
+  endif
+endfunction
+
+function! MonkeyTerminalExec(cmd)
+  if !win_gotoid(s:monkey_terminal_window)
+    call MonkeyTerminalOpen()
+  endif
+
+  " clear current input
+  call jobsend(s:monkey_terminal_job_id, "clear\n")
+
+  " run cmd
+  call jobsend(s:monkey_terminal_job_id, a:cmd . "\n")
+  normal! G
+  wincmd p
+endfunction
+
+" With this maps you can now toggle the terminal
+nnoremap <F7> :call MonkeyTerminalToggle()<cr>
+tnoremap <F7> <C-\><C-n>:call MonkeyTerminalToggle()<cr>
+tnoremap <leader><Esc> <C-\><c-n>
+
+autocmd filetype c,cc,cpp nnoremap <F5> :call MonkeyTerminalExec('make ' . expand('%<') . " && ./" . expand('%<'))<CR>
+autocmd filetype python nnoremap <F5> :call MonkeyTerminalExec('python3 ' . expand('%'))<CR>
+
+let g:ffind_open = "Trouble loclist"
