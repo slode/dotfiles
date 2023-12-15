@@ -3,20 +3,27 @@
 call plug#begin('~/.vim/plugged')
 
 " Python completion
-"let g:python3_host_prog = '/usr/bin/python3'
+let g:python3_host_prog = '/home/ubuntu/.config/nvim/nvim-venv/bin/python' 
 
-" Vim Script
-Plug 'williamboman/nvim-lsp-installer'
+Plug 'williamboman/mason.nvim'
 Plug 'neovim/nvim-lspconfig'
-Plug 'kyazdani42/nvim-web-devicons'
-Plug 'folke/trouble.nvim'
+
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+" For vsnip users.
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
 
 " Search for files
 Plug 'slode/vim-fast-find'
-Plug 'slode/nvim-pdb'
 
-" surround vim
-"Plug 'tpope/vim-surround'
+" QOL
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'folke/trouble.nvim'
 
 " nerd commenter
 Plug 'scrooloose/nerdcommenter'
@@ -25,50 +32,23 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
-" enhanced highlight
-Plug 'octol/vim-cpp-enhanced-highlight'
-
 " colorscheme
-"Plug 'wombat256mod.vim'
-Plug 'nanotech/jellybeans.vim'
-Plug 'chriskempson/base16-vim'
-Plug 'morhetz/gruvbox'
-Plug 'w0ng/vim-hybrid'
-Plug 'tpope/vim-vividchalk'
-Plug 'lokaltog/vim-distinguished'
 Plug 'altercation/vim-colors-solarized'
 
-Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/nvim-treesitter-context'
-
-" auto-close (for parenthesis)
-" TODO: broken, since clang_complete
-"Plug 'jiangmiao/auto-pairs'
-
-" ctrlp
-" TODO: learn
-" Plug 'kien/ctrlp.vim'
-
-" glsl color
-"Plug 'tikhomirov/vim-glsl'
-
-" debugger
-"Plug 'critiqjo/lldb.nvim'
 
 call plug#end()
 
 lua << EOF
-  require'treesitter-context'.setup{}
-EOF
-
-" pip install pyright "python-lsp-server[all]"
-lua << EOF
-
-  local opts = { noremap=true, silent=true }
-  vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
-  vim.keymap.set('n', '<leader>p', vim.diagnostic.goto_prev, opts)
-  vim.keymap.set('n', '<leader>n', vim.diagnostic.goto_next, opts)
-  vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+  require('nvim-treesitter.configs').setup {
+    ensure_installed = { "python", "c", "lua", "vim", "vimdoc", "query" },
+  }
+  require("trouble").setup {}
+  require("mason").setup {}
+  require("mason-lspconfig").setup {
+    ensure_installed = { "pylsp" }
+  }
 
   -- Use an on_attach function to only map the following keys
   -- after the language server attaches to the current buffer
@@ -77,45 +57,119 @@ lua << EOF
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
     -- Mappings.
-
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+    --vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+    --vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
     --vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
     vim.keymap.set('n', '<leader>k', vim.lsp.buf.hover, bufopts)
     --vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-    vim.keymap.set('n', '<leader>K', vim.lsp.buf.signature_help, bufopts)
+    --vim.keymap.set('n', '<leader>K', vim.lsp.buf.signature_help, bufopts)
     --vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
     --vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
     --vim.keymap.set('n', '<leader>wl', function()
     --  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     --end, bufopts)
-    vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
-    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
-    vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
-    vim.keymap.set('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
+    --vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
+    --vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+    --vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
+    --vim.keymap.set('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
   end
 
-  local lsp_flags = {
-    -- This is the default in Nvim 0.7+
-    debounce_text_changes = 150,
+  -- Set up nvim-cmp.
+  local has_words_before = function()
+    unpack = unpack or table.unpack
+    local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+    return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+  end
+
+  local feedkey = function(key, mode)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+  end
+
+  local cmp = require'cmp'
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body)
+      end,
+    },
+    window = {
+      completion = cmp.config.window.bordered(),
+      documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      ['<CR>'] = cmp.mapping.confirm({ select = false }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+--[[
+      ["<Tab>"] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_next_item()
+          elseif vim.fn["vsnip#available"](1) == 1 then
+            feedkey("<Plug>(vsnip-expand-or-jump)", "")
+          elseif has_words_before() then
+            cmp.complete()
+          else
+            fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+          end
+        end, { "i", "s" }
+      ),
+      ["<S-Tab>"] = cmp.mapping(function()
+        if cmp.visible() then
+          cmp.select_prev_item()
+        elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+          feedkey("<Plug>(vsnip-jump-prev)", "")
+        end
+      end, { "i", "s" }),
+--]]
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+--      { name = 'vsnip' },
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'git' }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline({ '/', '?' }, {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+  -- Set up lspconfig.
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+  require('lspconfig').pylsp.setup {
+    capabilities = capabilities,
+    on_attach = on_attach,
   }
 
-  require('lspconfig')['pyright'].setup{
-      on_attach = on_attach,
-      flags = lsp_flags,
-  }
-
-  require("nvim-lsp-installer").setup {
-    automatic_installation = true
-  }
-
-  require("trouble").setup {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
-  }
 EOF
 
 " ================ Suggestions ======================
@@ -206,7 +260,8 @@ nnoremap <leader>w <cmd>TroubleToggle workspace_diagnostics<cr>
 nnoremap <leader>d <cmd>TroubleToggle document_diagnostics<cr>
 nnoremap <leader>q <cmd>TroubleToggle quickfix<cr>
 nnoremap <leader>l <cmd>TroubleToggle loclist<cr>
-nnoremap gR <cmd>TroubleToggle lsp_references<cr>
+nnoremap gr <cmd>TroubleToggle lsp_references<cr>
+nnoremap gd <cmd>TroubleToggle lsp_definitions<cr>
 
 " ================ Visualization ====================
 
@@ -298,6 +353,8 @@ let g:netrw_liststyle = 3
 let g:netrw_browse_split = 0
 " open in split
 let g:netrw_altv=1
+" keep netrw in history
+let g:netrw_keepj=""
 
 let g:NetrwIsOpen=0
 function! ToggleNetrw()

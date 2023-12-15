@@ -39,6 +39,7 @@ alias tmux="TERM=screen-256color tmux -2"
 
 alias pp='python -c "import sys, json; print json.dumps( json.load(sys.stdin), sort_keys=True, indent=4)"'
 alias gs="git status"
+alias gl="git log"
 alias gc="git checkout"
 
 all-git() {
@@ -76,6 +77,8 @@ mult() {
   fi
   multitail -s 3 -M 10000 -N 10000 --follow-all --retry-all -CS runit $(echo $LOGFILES)
 }
+
+alias m="mult"
 
 work_activity() {
   local IFS=' '

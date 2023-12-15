@@ -243,8 +243,8 @@ bindsym $mod+g exec rofi -show window -fn 'DejaVuSansMono:pixelsize=18'
 # use this line to tell which monitor is on the right
 # xrandr --output DVI-I-2 --right-of DVI-I-1 --auto
 
-set $output1 "DP-2" #"Virtual1" #"DVI-I-1" 
-set $output2 "DP-0" #"Virtual2" #DP-1" 
+set $output1 "DP-0" #"Virtual1" #"DVI-I-1" 
+set $output2 "DP-2" #"Virtual2" #DP-1" 
 
 #Name the workspaces
 set $tag1  "1: "

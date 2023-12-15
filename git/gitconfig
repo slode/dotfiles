@@ -4,7 +4,7 @@
 [core]
 	excludesfile = ~/.gitignore
 	autocrlf = input
-	editor = /usr/bin/vim
+  editor = /snap/bin/nvim
 [color]
 	ui = auto
 [color "branch"]
@@ -40,6 +40,7 @@
 	comerge = "!x() { target=`git symbolic-ref HEAD`; git co $1; git merge $target; }; x"
   hide = update-index --assume-unchanged
   unhide = update-index --no-assume-unchanged
+	amend = commit --amend --no-edit
 [push]
 	default=current
 [branch]
@@ -49,3 +50,7 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[commit]
+	gpgsign = true
+[pack]
+	deltaCacheSize = 64m

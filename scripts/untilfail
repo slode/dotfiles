@@ -1,0 +1,17 @@
+#!/bin/bash
+
+. ~/bin/colors.sh
+
+COUNTER=0
+while true; do 
+  let COUNTER=COUNTER+1
+
+  echo -e "${fgc[green]}>>> Run ${COUNTER}. Started at $(date --utc +%FT%TZ).${fgc[reset]}"
+
+  "$@"
+
+  if [[ "$?" -ne 0 ]]; then 
+    echo -e "${fgc[bi_red]}>>> Run ${COUNTER}. Failed at $(date --utc +%FT%TZ). Process returned $?.${fgc[reset]}"
+    break
+  fi
+done
