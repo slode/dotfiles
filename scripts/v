@@ -14,63 +14,93 @@ import sys
 import re
 import argparse
 import tempfile
+import pathlib
+import dataclasses
+
+
+@dataclasses.dataclass
+class FileDescription:
+    filename: pathlib.Path
+    line_number: int = dataclasses.field(default=0)
 
 
 regex_matchers = [
-        re.compile('(?P<file>(\.\/|\/|~\/|\w+/)[\w~\.\/]+[^:[\(\s\n]+)+([^\d])*(?P<lno>\d+)?'),
-        re.compile('File "(?P<file>[^"]+)", line (?P<lno>\d+)?')
-        ]
+    re.compile(
+        """
+            (?P<file>(\.\/|\/|~\/|\w+/)[\w~\.\/]+[^:[,\(\s\n]+)+([^\d])*
+            (?P<lno>\d+)?
+        """,
+        re.VERBOSE,
+    ),
+    re.compile('File "(?P<file>[^"]+)", line (?P<lno>\d+)?'),
+]
 
-def find_first(name, path):
-    """Find first file on path."""
-    for root, dirs, files in os.walk(path):
-        if name in files:
-            return os.path.join(root, name)
 
-def read_stdin():
-    """Write to tmp-file from stdin and return filename"""
-    fd, fname = tempfile.mkstemp()
-    with os.fdopen(fd, "w") as f:
-        for line in sys.stdin:
-            f.write(line)
-    return fname
+def search_for_file(path: pathlib.Path) -> pathlib.Path | None:
+    """Searches for a file matching the input filename."""
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser("Vim file search")
-    parser.add_argument(
-            "-s", "--stdin",
-            help="Read from stdin",
-            action="store_true",
-            default=False)
-    parser.add_argument(
-            "pattern",
-            help="file-like path, optionally with line number\n"
-            "-- to read from stdin",
-            nargs="*",
-            default=None)
+    for f in pathlib.Path(".").rglob(path.name):
+        return f
 
-    args = parser.parse_args()
 
-    spec = {}
-    if args.stdin:
-        spec["file"] = read_stdin()
+def match_with_pattern(pattern: str) -> FileDescription:
+    """Match pattern against regular expressions verify that the file exists."""
+    for rex in regex_matchers:
+        match = rex.search(pattern)
+        if match is None:
+            continue
 
-    elif args.pattern is not None:
-        spec["file"] = " ".join(args.pattern)
-        for rex in regex_matchers:
-            match = rex.search(" ".join(args.pattern))
-            if match is None:
+        filename = pathlib.Path(match.group("file"))
+        line_number = match.group("lno") or 0
+
+        if not filename.exists():
+            filename = search_for_file(filename)
+            if not filename:
                 continue
 
-            spec.update({k: v for k, v in match.groupdict().items() if v is not None})
+        return FileDescription(
+            filename=filename,
+            line_number=line_number,
+        )
 
-        if not os.path.exists(spec["file"]):
-            spec["file"] = find_first(spec["file"], ".") or spec["file"]
+    raise OSError(f"File matching '{pattern}' not found!")
 
-    cmd = "vim"
 
-    if "file" in spec:
-        cmd += " +" + str(spec.get("lno", "0"))
-        cmd += " " + spec.get("file", "")
+def read_from_stdin() -> FileDescription:
+    """Dump stdin input to a named temp file and return file description."""
 
-    os.system(cmd)
+    with tempfile.NamedTemporaryFile(mode="w+", suffix=".txt", delete=False) as tf:
+        for line in sys.stdin:
+            tf.write(line)
+
+    return FileDescription(filename=pathlib.Path(tf.name))
+
+
+def main():
+    parser = argparse.ArgumentParser("Vim quick open")
+    parser.add_argument(
+        "pattern",
+        help="""
+                file-like path, optionally with line number.
+                If no argument is provided, 'v' reads from stdin.
+            """,
+        nargs="*",
+        default="",
+    )
+
+    args = parser.parse_args()
+    pattern = " ".join(args.pattern).strip()
+    try:
+        if pattern == "":
+            fd = read_from_stdin()
+        else:
+            fd = match_with_pattern(pattern)
+    except OSError as e:
+        sys.exit(str(e))
+
+    editor = os.environ.get("EDITOR", "nvim")
+    os.system(f"{editor} {fd.filename} +{fd.line_number}")
+
+
+if __name__ == "__main__":
+    main()

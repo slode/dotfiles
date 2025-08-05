@@ -20,7 +20,6 @@ alias h="history | grep -i"
 alias xx="exit"
 
 export EDITOR=nvim
-alias vim="$EDITOR"
 
 fe() {
   find . -iname "*$@"
@@ -39,8 +38,12 @@ alias tmux="TERM=screen-256color tmux -2"
 
 alias pp='python -c "import sys, json; print json.dumps( json.load(sys.stdin), sort_keys=True, indent=4)"'
 alias gs="git status"
+alias gd="git diff"
+alias gdu="git diff @{push}"
+alias gds="git diff --staged"
 alias gl="git log"
 alias gc="git checkout"
+alias pea='eval $(poetry env activate)'
 
 all-git() {
   for i in */.git; do
@@ -61,9 +64,13 @@ svp() {
       echo "${fg[yellow]}>>> sv ${cmd} ${s}${reset_color}"
       outp=$(sv ${cmd} $s)
       if [ $? -ne 0 ]; then
-        echo "${fg[red]}${outp}${reset_color}"
+        echo "${fg[red]}${outp:-not ok}${reset_color}"
       else
-        echo "${fg[green]}${outp}${reset_color}"
+        if [[ $outp =~ ^down: ]]; then
+          echo "${fg[gray]}${outp:-ok}${reset_color}"
+        else
+          echo "${fg[green]}${outp:-ok}${reset_color}"
+        fi
       fi
     done
   done
@@ -71,11 +78,15 @@ svp() {
 
 LOGDIR=~/log/services
 mult() {
-  LOGFILES=$(find $LOGDIR -iname "current" | sort)
-  if [ ! -z $1 ]; then
-    LOGFILES=$(echo $LOGFILES | grep $1)
-  fi
-  multitail -s 3 -M 10000 -N 10000 --follow-all --retry-all -CS runit $(echo $LOGFILES)
+  setopt null_glob
+  search_path="$LOGDIR"
+  LOGFILES=()
+  for ptrn in "${@:-}"; do
+    for s in ${search_path}/($ptrn|*.$ptrn)*/current; do
+      LOGFILES+=("$s")
+    done
+  done
+  multitail -s 3 -M 10000 -N 10000 --follow-all --retry-all -CS runit $(echo ${LOGFILES[@]})
 }
 
 alias m="mult"

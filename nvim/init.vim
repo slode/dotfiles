@@ -3,9 +3,10 @@
 call plug#begin('~/.vim/plugged')
 
 " Python completion
-let g:python3_host_prog = '/home/ubuntu/.config/nvim/nvim-venv/bin/python' 
+let g:python3_host_prog = '/home/stian/.pyenv/versions/3.12.1/envs/nvim-venv/bin/python'
 
 Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
 
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -20,6 +21,14 @@ Plug 'hrsh7th/vim-vsnip'
 
 " Search for files
 Plug 'slode/vim-fast-find'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+let g:fzf_vim = {}
+let g:fzf_vim.preview_window = [] "['hidden,right,50%,<70(up,40%)', 'ctrl-/']
+let g:fzf_vim.buffers_jump = 1
+let g:fzf_vim.command_prefix = 'Fzf'
+
 
 " QOL
 Plug 'kyazdani42/nvim-web-devicons'
@@ -38,12 +47,32 @@ Plug 'altercation/vim-colors-solarized'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/nvim-treesitter-context'
 
+Plug 'mfussenegger/nvim-dap'
+Plug 'mfussenegger/nvim-dap-python'
+
+Plug 'kovisoft/slimv'
+
 call plug#end()
 
 lua << EOF
   require('nvim-treesitter.configs').setup {
     ensure_installed = { "python", "c", "lua", "vim", "vimdoc", "query" },
   }
+  require'treesitter-context'.setup{
+    enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+    max_lines = 10, -- How many lines the window should span. Values <= 0 mean no limit.
+    min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+    line_numbers = true,
+    multiline_threshold = 3, -- Maximum number of lines to show for a single context
+    trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+    mode = 'cursor',  -- Line used to calculate context. Choices: 'cursor', 'topline'
+    -- Separator between context and content. Should be a single character string, like '-'.
+    -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+    separator = nil,
+    zindex = 20, -- The Z-index of the context window
+    on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+  }
+  ---require("dap-python").setup("python3")
   require("trouble").setup {}
   require("mason").setup {}
   require("mason-lspconfig").setup {
@@ -64,14 +93,14 @@ lua << EOF
     --vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
     vim.keymap.set('n', '<leader>k', vim.lsp.buf.hover, bufopts)
     --vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-    --vim.keymap.set('n', '<leader>K', vim.lsp.buf.signature_help, bufopts)
+    vim.keymap.set('n', '<leader>K', vim.lsp.buf.signature_help, bufopts)
     --vim.keymap.set('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, bufopts)
     --vim.keymap.set('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
     --vim.keymap.set('n', '<leader>wl', function()
     --  print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     --end, bufopts)
     --vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, bufopts)
-    --vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, bufopts)
     --vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, bufopts)
     --vim.keymap.set('n', '<leader>f', vim.lsp.buf.formatting, bufopts)
   end
@@ -201,7 +230,7 @@ set nowb
 " reload files changed outside vim
 set autoread
 " Trigger `autoread` when files changes on disk
-autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
+autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | silent! checktime | endif
 " Notification after file change
 autocmd FileChangedShellPost *
   \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
@@ -255,22 +284,24 @@ nnoremap <leader>sv :source $MYVIMRC<CR>
 
 " ################ LSP/TROUBLE ######################
 
-nnoremap <leader>x <cmd>TroubleToggle<cr>
-nnoremap <leader>w <cmd>TroubleToggle workspace_diagnostics<cr>
-nnoremap <leader>d <cmd>TroubleToggle document_diagnostics<cr>
-nnoremap <leader>q <cmd>TroubleToggle quickfix<cr>
-nnoremap <leader>l <cmd>TroubleToggle loclist<cr>
-nnoremap gr <cmd>TroubleToggle lsp_references<cr>
-nnoremap gd <cmd>TroubleToggle lsp_definitions<cr>
+nnoremap <leader>x <cmd>Trouble toggle<cr>
+nnoremap <leader>w <cmd>Trouble workspace_diagnostics toggle<cr>
+nnoremap <leader>d <cmd>Trouble document_diagnostics toggle<cr>
+nnoremap <leader>q <cmd>Trouble quickfix toggle<cr>
+nnoremap <leader>l <cmd>Trouble loclist toggle<cr>
+nnoremap <silent> gr <cmd>Trouble lsp_references toggle<cr>
+nnoremap <silent> gd <cmd>Trouble lsp_definitions toggle<cr>
 
 " ================ Visualization ====================
 
 syntax on
 set background=dark
 colorscheme solarized
+" disabled the new termcolors that break my colorschemes
+set notermguicolors
 
 " enable 256bit colors - also: override gnome-terminal's settings
-set t_Co=256
+"set t_Co=256
 
 
 " ================ Indentation ======================
@@ -421,6 +452,8 @@ set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 "disable preview window
 set completeopt-=preview
 
+"set iskeyword=@,48-57,_,192-255,?,-,*,!,+,/,=,<,>,.,:,$
+
 " ================ Term ==========================
 
 "set termguicolors
@@ -473,6 +506,7 @@ let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
 
+let g:airline#extensions#tabline#buffer_idx_mode = 1
 
 " ################ A ################################
 
@@ -486,6 +520,13 @@ let g:airline_symbols.linenr = ''
 "nnoremap <F2> :IH<CR>
 "inoremap <F2> <ESC>:IH<CR>
 
+
+
+" ############### SLIMV/ROS ###################
+"
+let g:slimv_swank_cmd = "!ros -e '(ql:quickload :swank) (swank:create-server)' wait &"
+let g:slimv_lisp = 'ros run'
+let g:slimv_impl = 'sbcl'
 
 
 " ############### MONKEY TERMINAL ###################
@@ -567,5 +608,7 @@ tnoremap <leader><Esc> <C-\><c-n>
 
 autocmd filetype c,cc,cpp nnoremap <F5> :call MonkeyTerminalExec('make ' . expand('%<') . " && ./" . expand('%<'))<CR>
 autocmd filetype python nnoremap <F5> :call MonkeyTerminalExec('python3 ' . expand('%'))<CR>
+
+nnoremap <expr> <leader>f (len(system('git rev-parse')) ? ':FzfFiles<cr>' : ':FzfGFiles<cr>')
 
 let g:ffind_open = "Trouble loclist"
