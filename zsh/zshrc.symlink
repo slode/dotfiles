@@ -49,8 +49,9 @@ bindkey -M vicmd v edit-command-line
 #-----------------------------
 # Share history | add before exec
 #-----------------------------
-setopt inc_append_history
+#setopt inc_append_history
 setopt share_history
+setopt extended_history
 setopt hist_ignore_all_dups
 setopt hist_ignore_dups
 setopt hist_ignore_space
@@ -80,3 +81,7 @@ source ~/.zsh/load_modules
 
 autoload -U promptinit; promptinit
 prompt pure
+
+autoload -Uz compinit
+zstyle ':completion:*' menu select
+fpath+=~/.zfunc

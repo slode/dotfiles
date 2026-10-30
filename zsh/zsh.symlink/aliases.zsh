@@ -86,10 +86,12 @@ mult() {
       LOGFILES+=("$s")
     done
   done
-  multitail -s 3 -M 10000 -N 10000 --follow-all --retry-all -CS runit $(echo ${LOGFILES[@]})
+ 
+  multitail -s 3 -M 10000 -N 10000 --follow-all --retry-all -CT ansi -CS runit  $(echo ${LOGFILES[@]})
 }
 
 alias m="mult"
+
 
 work_activity() {
   local IFS=' '
@@ -108,3 +110,5 @@ work_activity() {
 
   done
 }
+
+alias dev="bcd j; uva"

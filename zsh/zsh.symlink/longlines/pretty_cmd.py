@@ -9,8 +9,7 @@ Author: Stian Lode stian.lode@gmail.com
 """
 import sys, textwrap
 
-
-def print_cmd(command, line_length=80, indent=r" " * 4):
+def print_cmd(command, line_length=80, indent=r" "*4):
     lines = textwrap.wrap(
         command,
         width=line_length,
