@@ -32,6 +32,7 @@ require("plugins.gitsigns-config")
 require("plugins.nvim-tree-config")
 require("plugins.fzf-config")
 require("plugins.mini-config")
+require("plugins.dbext-config")
 
 -- ============================================================================
 -- LSP PLUGINS

@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "dbext.vim": {
+      "rev": "14f3d530b6189dc3f97edfa70b7a36006e21148c",
+      "src": "https://github.com/vim-scripts/dbext.vim"
+    },
     "fzf-lua": {
       "rev": "9f0432fdd7825ab163520045831a40b6df82ea28",
       "src": "https://www.github.com/ibhagwan/fzf-lua"
